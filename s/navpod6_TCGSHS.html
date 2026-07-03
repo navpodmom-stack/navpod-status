@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>navpod6_TCGSHS — NavPod 觀測網</title><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><style>
+:root { color-scheme: dark; }
+* { box-sizing: border-box; margin: 0; }
+body { font-family: "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
+       background: #0d1117; color: #e6edf3; }
+a { color: #58a6ff; text-decoration: none; }
+.banner { padding: 18px 26px; display: flex; flex-wrap: wrap;
+          align-items: baseline; gap: 16px; }
+.banner h1 { font-size: 22px; font-weight: 700; }
+.sub { padding: 8px 26px; color: #8b949e; font-size: 12.5px;
+       font-family: Consolas, monospace; }
+.wrap { padding: 6px 26px 30px; max-width: 1180px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 12.5px; color: #8b949e; border: 1px solid;
+        border-radius: 999px; padding: 3px 11px; white-space: nowrap; }
+.chip b { font-family: Consolas, monospace; }
+.plist { list-style: none; }
+.plist li { padding: 5px 0; font-size: 14.5px; line-height: 1.55;
+            border-top: 1px dashed #21262d; }
+.tag { color: #0d1117; font-size: 11.5px; font-weight: 700; border-radius: 4px;
+       padding: 2px 7px; margin-right: 9px; }
+
+.banner { background: #f8514922; border-bottom: 4px solid #f85149; }
+</style></head><body>
+<div class="banner">
+  <h1><a href="../index.html" style="color:#8b949e">← NavPod 觀測網</a> / navpod6_TCGSHS</h1>
+  <div style="font-size:26px;font-weight:800;color:#f85149">危險</div>
+</div>
+<div class="sub">資料時間 2026-09-07T13:00:04&ensp;|&ensp;頁面產生 2026-10-31 21:41:31&ensp;|&ensp;歷史保留 365 天</div>
+<div class="wrap"><style>
+.mt { border-collapse:collapse;width:100%;font-size:13.5px }
+.mt th,.mt td { border-bottom:1px solid #21262d;padding:7px 12px 7px 0;text-align:left;vertical-align:top }
+.mt th { color:#8b949e;font-weight:600 }
+.mt .md { font-family:Consolas,monospace;white-space:nowrap;color:#e3b341 }
+.mt .mdt { color:#8b949e }
+.mst { background:#1f6feb22;color:#58a6ff;border-radius:4px;padding:1px 7px;white-space:nowrap }
+.mcat { border:1px solid #30363d;border-radius:999px;padding:1px 8px;white-space:nowrap;color:#c9d1d9 }
+
+.two { display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start }
+@media (max-width:820px) { .two { grid-template-columns:1fr } }
+.mainimg { width:100%;border-radius:12px;border:1px solid #30363d;display:block }
+#map { width:100%;height:320px;border-radius:12px;border:1px solid #30363d;background:#161b22 }
+.leaflet-container { background:#161b22 }
+.mctl { display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap }
+.mctl .lg { margin-left:auto;color:#8b949e;font-size:12px;display:flex;align-items:center }
+.mctl .lg i { width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px }
+.ph { color:#8b949e;border:1px dashed #30363d;border-radius:12px;padding:0 20px;height:320px;
+      display:flex;flex-direction:column;justify-content:center;text-align:center;font-size:15px }
+.ph span { font-size:12.5px;color:#6e7681 }
+.coord { color:#8b949e;font-size:12px;font-family:Consolas,monospace;margin-top:6px }
+h2 { font-size:16px;color:#8b949e;margin:24px 0 10px }
+table { border-collapse:collapse;font-family:Consolas,monospace;font-size:13.5px }
+th,td { border-bottom:1px solid #21262d;padding:6px 14px 6px 0;text-align:left }
+th { color:#8b949e;font-weight:600 }
+.help { background:#161b22;border:1px solid #30363d;border-radius:10px;padding:12px 16px }
+.help h3 { font-size:13px;color:#8b949e;margin-bottom:8px;font-weight:600 }
+.help dl { margin:0;font-size:13px;line-height:1.6 }
+.help dt { color:#e6edf3;font-weight:700;margin-top:8px;font-family:Consolas,monospace }
+.help dt:first-child { margin-top:0 }
+.help dd { margin:0;color:#8b949e }
+.help code { background:#0d1117;border:1px solid #30363d;border-radius:4px;
+             padding:1px 5px;font-family:Consolas,monospace;font-size:12px }
+.help .bits { margin-top:6px;font-size:12px;border-collapse:collapse }
+.help .bits th { color:#6e7681;font-weight:600;padding:2px 10px 2px 0 }
+.help .bits td { padding:2px 10px 2px 0;border-bottom:1px solid #21262d;
+                 font-family:Consolas,monospace }
+.help .bits td:last-child { font-family:inherit }
+.ctrl { display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px }
+.pbtn { background:#161b22;color:#e6edf3;border:1px solid #30363d;border-radius:999px;
+        padding:5px 14px;font-size:13px;cursor:pointer;font-family:inherit }
+.pbtn:hover { border-color:#58a6ff }
+.pbtn.on { background:#1f6feb33;border-color:#58a6ff;color:#58a6ff;font-weight:700 }
+.ctrl input { background:#0d1117;color:#e6edf3;border:1px solid #30363d;border-radius:6px;
+              padding:4px 8px;font-size:13px;font-family:Consolas,monospace }
+.ctrl .sep { color:#6e7681;margin:0 2px }
+#rangeinfo { color:#8b949e;font-size:12.5px;font-family:Consolas,monospace;margin-left:auto }
+#charts { display:grid;grid-template-columns:1fr 1fr;gap:12px }
+@media (max-width:820px) { #charts { grid-template-columns:1fr } }
+.ch { background:#161b22;border:1px solid #30363d;border-radius:10px;padding:10px 12px }
+.cht { font-size:13px;color:#8b949e;margin-bottom:4px }
+.cht b { font-family:Consolas,monospace;font-size:15px }
+.cht .rng { float:right;font-size:11.5px;color:#6e7681;font-family:Consolas,monospace }
+.lgs { display:flex;flex-wrap:wrap;gap:12px;margin-bottom:4px }
+.lgi { font-size:11.5px;color:#8b949e;display:flex;align-items:center }
+.lgi i { width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:5px }
+.lgi b { font-family:Consolas,monospace;color:#e6edf3;margin-left:4px }
+.zbtn { margin-left:auto;display:flex;gap:4px }
+.zb { background:#0d1117;color:#8b949e;border:1px solid #30363d;border-radius:5px;
+      padding:1px 8px;font-size:11px;cursor:pointer;font-family:inherit }
+.zb:hover { border-color:#58a6ff }
+.zb.on { background:#1f6feb33;border-color:#58a6ff;color:#58a6ff;font-weight:700 }
+#connect table { margin-bottom:6px }
+#connect .chd { border-top:1px dashed #21262d;padding-top:6px;font-size:12px;
+                color:#8b949e;line-height:1.5 }
+.ch svg { width:100%;height:170px;display:block }
+.ax { fill:#6e7681;font-size:9px;font-family:Consolas,monospace }
+.axt { fill:#6e7681;font-size:9.5px }
+.zl { font-size:9px;font-family:Consolas,monospace }
+.chd { font-size:12px;color:#8b949e;line-height:1.5;margin-top:6px;
+       border-top:1px dashed #21262d;padding-top:6px }
+.chd .zo { color:#6e7681 }
+.chna { color:#6e7681;font-size:13px;padding:20px 4px }
+.gal { display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px }
+.gal img { width:100%;border-radius:8px;border:1px solid #30363d;display:block }
+.probs { background:#161b22;border:1px solid #30363d;border-radius:10px;padding:12px 18px }
+</style>
+<div class="two">
+  <div><img class="mainimg" src="../photos/navpod6_TCGSHS/main.jpg" alt="navpod6_TCGSHS"></div>
+  <div><div id="map"></div><div class="mctl"><button class="pbtn" id="backme">回到本站</button><button class="pbtn" id="fitall">顯示全部站點</button><span class="lg"><i style="background:#f85149"></i>本站<i style="background:#58a6ff;margin-left:10px"></i>其他站</span></div><div class="coord">24.135724, 120.676311 · 台中女中</div></div>
+</div>
+<h2>目前狀態</h2><div class="chips"><span class="chip" style="border-color:#f85149;font-size:14px;padding:6px 14px">資料回傳 <b style="color:#f85149">78281 分前</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">CPU溫度 <b style="color:#3fb950">66.4°C</b></span><span class="chip" style="border-color:#d29922;font-size:14px;padding:6px 14px">供電 <b style="color:#d29922">0xe0000</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">磁碟 <b style="color:#3fb950">34/234GB</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">記憶體 <b style="color:#3fb950">56%</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">負載 <b style="color:#3fb950">0.00</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">Logger <b style="color:#3fb950">active</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">F9P <b style="color:#3fb950">在線</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">資料檔 <b style="color:#3fb950">53 分前</b></span><span class="chip" style="border-color:#f85149;font-size:14px;padding:6px 14px">檔案大小 <b style="color:#f85149">103MB</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">機殼溫升 <b style="color:#3fb950">+36.5°C</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">環境氣溫 <b style="color:#3fb950">29.9°C (臺中 1.4km)</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">回傳通道 <b style="color:#3fb950">—</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">運行時間 <b style="color:#3fb950">1175.0h</b></span></div>
+<h2>問題說明</h2><div class="probs"><ul class="plist"><li><span class="tag" style="background:#f85149">危險</span><b>資料回傳</b>:狀態資料已 78281 分鐘沒更新:站點可能斷電/斷網,或兩條回傳通道都中斷</li><li><span class="tag" style="background:#d29922">警告</span><b>供電</b>:曾發生:曾限制頻率、曾降頻、曾達軟性溫度上限 (已恢復,建議檢查供電/散熱)</li><li><span class="tag" style="background:#f85149">危險</span><b>檔案大小</b>:檔案異常巨大(103MB,新站上限 100MB)——logger 極可能卡住,持續寫入同一個檔案而未輪替,請檢查該站行程</li></ul></div>
+<h2>趨勢</h2>
+<div class="ctrl">
+  <button class="pbtn" data-h="1" onclick="__preset(1,this)">1小時</button><button class="pbtn" data-h="6" onclick="__preset(6,this)">6小時</button><button class="pbtn" data-h="24" onclick="__preset(24,this)">24小時</button><button class="pbtn" data-h="72" onclick="__preset(72,this)">3天</button><button class="pbtn" data-h="168" onclick="__preset(168,this)">7天</button><button class="pbtn" data-h="720" onclick="__preset(720,this)">30天</button><button class="pbtn" data-h="2160" onclick="__preset(2160,this)">90天</button><button class="pbtn" data-h="0" onclick="__preset(0,this)">全部</button>
+  <span class="sep">|</span>
+  <input type="datetime-local" id="f"><span class="sep">→</span>
+  <input type="datetime-local" id="t">
+  <button class="pbtn" onclick="__apply()">套用</button>
+  <span id="rangeinfo"></span>
+</div>
+<div id="charts"></div>
+<h2>維護紀錄</h2>
+<div class="chna">此站尚無維護紀錄</div>
+<div class="chd" style="margin-top:6px">趨勢圖上的琥珀色虛線 ▼ 為維護時間點,滑鼠移上可看內容。完整日誌見 <a href="../maintenance.html">維護日誌</a>。</div>
+<h2>遠端連線紀錄</h2>
+<div id="connect"></div>
+<h2>最近一小時紀錄</h2>
+<div class="two">
+  <div><table><tr><th>時間</th><th>溫度</th><th>磁碟</th><th>Logger</th><th>資料檔</th><th>供電</th></tr><tr><td>13:00</td><td>66.4°C</td><td>34/234GB</td><td style="color:#3fb950">active</td><td>53 分</td><td>0xe0000</td></tr><tr><td>12:00</td><td>69.2°C</td><td>34/234GB</td><td style="color:#3fb950">active</td><td>53 分</td><td>0xe0000</td></tr><tr><td>11:00</td><td>71.9°C</td><td>34/234GB</td><td style="color:#3fb950">active</td><td>53 分</td><td>0xe0000</td></tr><tr><td>10:00</td><td>65.3°C</td><td>34/234GB</td><td style="color:#3fb950">active</td><td>53 分</td><td>0xe0000</td></tr><tr><td>09:00</td><td>68.6°C</td><td>34/234GB</td><td style="color:#3fb950">active</td><td>53 分</td><td>0xe0000</td></tr><tr><td>08:00</td><td>68.1°C</td><td>33/234GB</td><td style="color:#3fb950">active</td><td>53 分</td><td>0xe0000</td></tr><tr><td>07:00</td><td>63.1°C</td><td>33/234GB</td><td style="color:#3fb950">active</td><td>53 分</td><td>0xe0000</td></tr><tr><td>06:00</td><td>57.1°C</td><td>33/234GB</td><td style="color:#3fb950">active</td><td>53 分</td><td>0xe0000</td></tr><tr><td>05:00</td><td>58.7°C</td><td>33/234GB</td><td style="color:#3fb950">active</td><td>53 分</td><td>0xe0000</td></tr><tr><td>04:00</td><td>56.5°C</td><td>33/234GB</td><td style="color:#3fb950">active</td><td>53 分</td><td>0xe0000</td></tr><tr><td>03:00</td><td>58.2°C</td><td>33/234GB</td><td style="color:#3fb950">active</td><td>53 分</td><td>0xe0000</td></tr><tr><td>02:00</td><td>57.6°C</td><td>33/234GB</td><td style="color:#3fb950">active</td><td>53 分</td><td>0xe0000</td></tr></table></div>
+  
+<div class="help"><h3>欄位說明</h3><dl>
+<dt>時間</dt><dd>採樣時刻(每 5 分鐘一筆,顯示最近 12 筆)</dd>
+<dt>溫度</dt><dd>以 <code>vcgencmd measure_temp</code> 取得,由 SoC 內建的溫度感測器直接量測
+<b>晶片核心(die)溫度</b>——不是盒內氣溫,通常比環境溫度高出不少。此值也是 Pi 自我保護的依據:
+Pi 4/5 約在 80–85°C 開始自動降頻。&lt;70°C 正常,70–80 留意散熱</dd>
+<dt>磁碟</dt><dd>以 <code>df</code> 讀取根分割區(整張 SD 卡)的已用/總容量。
+資料每日累積,約 30 天後被清檔排程抵銷而趨於平衡;若只升不降代表清檔失效</dd>
+<dt>Logger</dt><dd>資料記錄服務狀態。<b style="color:#3fb950">active</b> = 正常錄製中;
+其他值代表 GNSS 資料收集已中斷</dd>
+<dt>資料檔</dt><dd>距最新完成 .ubx 的分鐘數。每小時換檔,故正常在 0–60 間循環;
+若持續攀升不歸零,代表已停止收資料</dd>
+<dt>供電</dt><dd>以 <code>vcgencmd get_throttled</code> 取得的十六進位旗標,
+每個位元代表一種狀況,可同時成立(數值為相加):
+<table class="bits">
+<tr><th>值</th><th>位元</th><th>意義</th></tr>
+<tr><td>0x0</td><td>—</td><td style="color:#3fb950">一切正常,從未發生異常</td></tr>
+<tr><td>0x1</td><td>bit 0</td><td style="color:#f85149"><b>目前電壓不足</b>——供電不穩或電池將盡,最緊急</td></tr>
+<tr><td>0x2</td><td>bit 1</td><td style="color:#f85149">目前 ARM 頻率被限制</td></tr>
+<tr><td>0x4</td><td>bit 2</td><td style="color:#f85149">目前正在降頻(throttling)</td></tr>
+<tr><td>0x8</td><td>bit 3</td><td style="color:#f85149">目前已達軟性溫度上限(約 60°C 起降頻)</td></tr>
+<tr><td>0x10000</td><td>bit 16</td><td style="color:#d29922">曾發生電壓不足(現已恢復)</td></tr>
+<tr><td>0x20000</td><td>bit 17</td><td style="color:#d29922">曾發生 ARM 頻率限制</td></tr>
+<tr><td>0x40000</td><td>bit 18</td><td style="color:#d29922">曾發生降頻</td></tr>
+<tr><td>0x80000</td><td>bit 19</td><td style="color:#d29922">曾達軟性溫度上限</td></tr>
+</table>
+低位元(0x1–0x8)= <b>正在發生</b>,需立即處理;
+高位元(0x10000 以上)= <b>曾經發生但已恢復</b>,屬事後追查線索。
+例:<code>0x50000</code> = 曾電壓不足 + 曾降頻,目前已正常。</dd>
+</dl></div>
+</div>
+<h2>更多照片</h2><div class="gal"><a href="../photos/navpod6_TCGSHS/1.jpg" target="_blank"><img src="../photos/navpod6_TCGSHS/1.jpg" alt=""></a><a href="../photos/navpod6_TCGSHS/2.jpg" target="_blank"><img src="../photos/navpod6_TCGSHS/2.jpg" alt=""></a><a href="../photos/navpod6_TCGSHS/4.jpg" target="_blank"><img src="../photos/navpod6_TCGSHS/4.jpg" alt=""></a><a href="../photos/navpod6_TCGSHS/5.jpg" target="_blank"><img src="../photos/navpod6_TCGSHS/5.jpg" alt=""></a><a href="../photos/navpod6_TCGSHS/6.jpg" target="_blank"><img src="../photos/navpod6_TCGSHS/6.jpg" alt=""></a><a href="../photos/navpod6_TCGSHS/7.jpg" target="_blank"><img src="../photos/navpod6_TCGSHS/7.jpg" alt=""></a></div>
+</div>
+<script>
+(function(){
+  var ALL = [{"n": "navpod10_FC", "lat": 25.297454, "lon": 121.537946, "note": "富貴角"}, {"n": "navpod12_NCUS4west", "lat": 24.971426, "lon": 121.191679, "note": "中大科4west"}, {"n": "navpod1_CYweather", "lat": 23.495995, "lon": 120.433004, "note": "嘉義氣象站"}, {"n": "navpod2_NCYU", "lat": 23.4707912, "lon": 120.4862824, "note": "嘉義大學"}, {"n": "navpod3_MTES", "lat": 23.475972, "lon": 120.45529, "note": "民族國小"}, {"n": "navpod4_HAES", "lat": 23.459297, "lon": 120.454289, "note": "興安國小"}, {"n": "navpod5_LTES", "lat": 23.473849, "lon": 120.471156, "note": "蘭潭國小"}, {"n": "navpod6.1_TCGSHS", "lat": 24.135724, "lon": 120.676311, "note": "台中女中"}, {"n": "navpod6_TCGSHS", "lat": 24.135724, "lon": 120.676311, "note": "台中女中"}, {"n": "navpod7.1_TCFSH", "lat": 24.150757, "lon": 120.6858541, "note": "台中一中"}, {"n": "navpod7_TCFSH", "lat": 24.150757, "lon": 120.6858541, "note": "台中一中"}, {"n": "navpod9_NCUS4", "lat": 24.971541, "lon": 121.19222, "note": "中大科4"}], ME = "navpod6_TCGSHS";
+  var self = ALL.filter(function(m){return m.n===ME;})[0];
+  if(!self) return;
+  var map = L.map('map', {scrollWheelZoom:false}).setView([self.lat, self.lon], 16);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {maxZoom:19, attribution:'&copy; OpenStreetMap'}).addTo(map);
+  var mk = [];
+  ALL.forEach(function(m){
+    var me = (m.n===ME);
+    var c = L.circleMarker([m.lat,m.lon], {
+      radius: me?10:7, color:'#0d1117', weight:2,
+      fillColor: me?'#f85149':'#58a6ff', fillOpacity:0.95
+    }).addTo(map);
+    c.bindPopup('<b>'+m.n+'</b>'+(m.note?'<br>'+m.note:'')
+      +(me?'':'<br><a href="'+m.n+'.html">前往站點頁</a>'));
+    if(me) c.bringToFront();
+    mk.push(c);
+  });
+  document.getElementById('fitall').onclick = function(){
+    map.fitBounds(L.featureGroup(mk).getBounds().pad(0.2));
+  };
+  document.getElementById('backme').onclick = function(){
+    map.setView([self.lat, self.lon], 16);
+  };
+})();
+</script>
+<script>
+(function(){
+  var D = {"t0":"2026-07-04T18:39:39","pts":[[0,46.6,3.0,0.0,1.61,null,null,null,null,null],[141,39.5,4.0,2.0,0.0,null,null,null,null,null],[200,40.6,4.0,1.0,0.09,null,null,null,null,null],[261,40.0,4.0,43.0,0.46,null,null,null,null,null],[321,38.9,4.0,20.0,0.16,null,null,null,null,null],[381,39.5,4.0,20.0,0.02,null,null,null,null,null],[441,38.9,4.0,1.0,0.12,null,null,null,null,null],[501,39.5,4.0,13.0,0.0,null,null,null,null,null],[561,39.5,4.0,56.0,0.05,null,null,null,null,null],[621,39.5,4.0,19.0,0.03,null,null,null,null,null],[681,42.2,4.0,25.0,0.05,null,null,null,null,null],[741,40.0,4.0,3.0,0.23,null,null,null,null,null],[801,40.6,4.0,8.0,0.11,null,null,null,null,null],[861,41.7,4.0,28.0,0.0,null,null,null,null,null],[921,41.7,4.0,2.0,0.17,null,null,null,null,null],[981,41.1,4.0,16.0,0.08,null,null,null,null,null],[1041,40.6,4.0,7.0,0.11,null,null,null,null,null],[1101,42.8,4.0,13.0,0.0,null,null,null,null,null],[1161,41.7,4.0,13.0,0.06,null,null,null,null,null],[1221,40.6,4.0,13.0,0.12,null,null,null,null,null],[1281,40.6,4.0,7.0,0.3,null,null,null,null,null],[1341,40.6,4.0,58.0,0.03,null,null,null,null,null],[1401,41.1,4.0,24.0,0.04,null,null,null,null,null],[34880,57.1,7.0,57.0,0.04,null,null,null,null,null],[34940,58.7,7.0,57.0,0.08,null,null,null,null,null],[35000,57.6,7.0,57.0,0.06,null,null,null,null,null],[35060,56.5,7.0,57.0,0.0,null,null,null,null,null],[35120,57.6,7.0,57.0,0.06,null,null,null,null,null],[35180,57.1,7.0,57.0,0.02,null,null,null,null,null],[35240,57.6,7.0,57.0,0.02,null,null,null,null,null],[35300,65.9,7.0,57.0,0.0,null,null,null,null,null],[35360,64.2,7.0,57.0,0.11,null,null,null,null,null],[35420,68.6,7.0,57.0,0.03,null,null,null,null,null],[35480,68.6,7.0,57.0,0.19,null,null,null,null,null],[35540,67.5,7.0,57.0,0.06,null,null,null,null,null],[35600,74.1,7.0,57.0,0.09,null,null,null,null,null],[35660,69.7,7.0,57.0,0.03,null,null,null,null,null],[35720,75.2,7.0,57.0,0.07,null,null,null,null,null],[35780,66.4,7.0,57.0,0.0,null,null,null,null,null],[35840,64.2,7.0,57.0,0.02,null,null,null,null,null],[35900,68.1,7.0,57.0,0.02,null,null,null,null,null],[35960,63.7,7.0,57.0,0.06,null,null,null,null,null],[36020,60.4,7.0,57.0,0.0,null,null,null,null,null],[36080,58.7,7.0,57.0,0.03,null,null,null,null,null],[36140,58.2,7.0,57.0,0.0,null,null,null,null,null],[36200,58.7,7.0,57.0,0.12,null,null,null,null,null],[36260,57.6,7.0,57.0,0.02,null,null,null,null,null],[36320,57.6,7.0,57.0,0.0,null,null,null,null,null],[36380,59.3,7.0,57.0,0.0,null,null,null,null,null],[36440,56.5,7.0,57.0,0.08,null,null,null,null,null],[36500,57.1,7.0,57.0,0.0,null,null,null,null,null],[36560,57.6,7.0,57.0,0.0,null,null,null,null,null],[36620,57.1,7.0,57.0,0.0,null,null,null,null,null],[36680,57.6,7.0,57.0,0.0,null,null,null,null,null],[36740,60.9,7.0,57.0,0.01,null,null,null,null,null],[36800,66.4,7.0,57.0,0.0,null,null,null,null,null],[36860,72.5,7.0,57.0,0.1,null,null,null,null,null],[36920,71.9,7.0,57.0,0.17,null,null,null,null,null],[36980,71.9,7.0,57.0,0.04,null,null,null,null,null],[37040,71.4,7.0,57.0,0.0,null,null,null,null,null],[37100,70.3,7.0,57.0,0.08,null,null,null,null,null],[37160,69.7,7.0,57.0,0.0,null,null,null,null,null],[37220,67.0,7.0,57.0,0.03,null,null,null,null,null],[37280,68.6,7.0,57.0,0.03,null,null,null,null,null],[37340,64.2,7.0,57.0,0.02,null,null,null,null,null],[37400,60.9,7.0,57.0,0.08,null,null,null,null,null],[37460,59.3,7.0,57.0,0.1,null,null,null,null,null],[37520,58.7,7.0,57.0,0.0,null,null,null,null,null],[37580,59.3,7.0,57.0,0.03,null,null,null,null,null],[37640,59.3,7.0,57.0,0.03,null,null,null,null,null],[37700,58.2,7.0,57.0,0.12,null,null,null,null,null],[37760,56.0,7.0,57.0,0.0,null,null,null,null,null],[37820,58.2,7.0,57.0,0.14,null,null,null,null,null],[37880,58.7,7.0,57.0,0.01,null,null,null,null,null],[37940,57.6,7.0,57.0,0.07,null,null,null,null,null],[38000,58.2,7.0,57.0,0.0,null,null,null,null,null],[38060,57.6,7.0,57.0,0.08,null,null,null,null,null],[38120,58.7,7.0,57.0,0.17,null,null,null,null,null],[38180,63.1,7.0,57.0,0.04,null,null,null,null,null],[38240,65.9,7.0,57.0,0.0,null,null,null,null,null],[38300,69.7,7.0,57.0,0.07,null,null,null,null,null],[38360,73.0,7.0,57.0,0.02,null,null,null,null,null],[38420,70.8,7.0,57.0,0.17,null,null,null,null,null],[38480,69.2,7.0,57.0,0.05,null,null,null,null,null],[38540,64.8,7.0,57.0,0.0,null,null,null,null,null],[38600,64.2,7.0,57.0,0.22,null,null,null,null,null],[38660,67.0,7.0,57.0,0.01,null,null,null,null,null],[38720,63.1,7.0,57.0,0.1,null,null,null,null,null],[38780,65.9,7.0,56.0,0.0,null,null,null,null,null],[38840,63.1,7.0,57.0,0.11,null,null,null,null,null],[38900,58.2,7.0,57.0,0.05,null,null,null,null,null],[38960,59.8,7.0,57.0,0.08,null,null,null,null,null],[39020,58.7,7.0,57.0,0.02,null,null,null,null,null],[39080,58.7,7.0,57.0,0.18,null,null,null,null,null],[39140,57.1,7.0,57.0,0.0,null,null,null,null,null],[39200,59.3,7.0,57.0,0.11,null,null,null,null,null],[39260,59.8,7.0,57.0,0.0,null,null,null,null,null],[39320,58.7,7.0,57.0,0.02,null,null,null,null,null],[39380,57.6,7.0,57.0,0.08,null,null,null,null,null],[39440,56.5,7.0,57.0,0.12,null,null,null,null,null],[39500,58.2,7.0,57.0,0.0,null,null,null,null,null],[39560,58.2,7.0,57.0,0.21,null,null,null,null,null],[39620,60.4,7.0,57.0,0.07,null,null,null,null,null],[39680,69.2,7.0,57.0,0.05,null,null,null,null,null],[39740,74.7,7.0,57.0,0.04,null,null,null,null,null],[39800,77.9,7.0,57.0,0.08,null,null,null,null,null],[39860,68.1,7.0,57.0,0.02,null,null,null,null,null],[39920,64.2,7.0,57.0,0.09,null,null,null,null,null],[39980,70.8,7.0,57.0,0.0,null,null,null,null,null],[40040,75.7,7.0,57.0,0.09,null,null,null,null,null],[40100,70.8,7.0,57.0,0.01,null,null,null,null,null],[40160,68.6,7.0,57.0,0.12,null,null,null,null,null],[40220,71.9,7.0,57.0,0.0,null,null,null,null,null],[40280,66.4,7.0,57.0,0.12,null,null,null,null,null],[40340,59.3,7.0,57.0,0.07,null,null,null,null,null],[40400,59.3,7.0,57.0,0.12,null,null,null,null,null],[40460,59.8,7.0,57.0,0.0,null,null,null,null,null],[40520,61.5,7.0,57.0,0.17,null,null,null,null,null],[40580,58.7,7.0,57.0,0.0,null,null,null,null,null],[40640,58.2,7.0,57.0,0.11,null,null,null,null,null],[40700,57.6,7.0,56.0,0.0,null,null,null,null,null],[40760,57.6,7.0,56.0,0.07,null,null,null,null,null],[40820,58.7,7.0,56.0,0.06,null,null,null,null,null],[40880,58.7,7.0,56.0,0.09,null,null,null,null,null],[40940,58.2,7.0,56.0,0.0,null,null,null,null,null],[41000,59.3,7.0,56.0,0.02,null,null,null,null,null],[41060,62.6,7.0,56.0,0.0,null,null,null,null,null],[41120,66.4,7.0,56.0,0.14,null,null,null,null,null],[41180,71.4,7.0,56.0,0.0,null,null,null,null,null],[41240,76.3,7.0,56.0,0.13,null,null,null,null,null],[41300,74.1,7.0,56.0,0.0,null,null,null,null,null],[41360,65.9,7.0,56.0,0.06,null,null,null,null,null],[41420,69.7,7.0,56.0,0.0,null,null,null,null,null],[41480,68.6,7.0,56.0,0.02,null,null,null,null,null],[41540,71.9,7.0,56.0,0.0,null,null,null,null,null],[41600,74.1,7.0,56.0,0.0,null,null,null,null,null],[41660,67.0,7.0,56.0,0.0,null,null,null,null,null],[41720,62.6,7.0,56.0,0.0,null,null,null,null,null],[41780,59.3,7.0,56.0,0.08,null,null,null,null,null],[41840,59.3,7.0,56.0,0.09,null,null,null,null,null],[41900,58.2,7.0,56.0,0.08,null,null,null,null,null],[41960,59.8,8.0,56.0,0.02,null,null,null,null,null],[42020,59.8,8.0,56.0,0.09,null,null,null,null,null],[42080,58.2,8.0,56.0,0.0,null,null,null,null,null],[42140,58.2,8.0,56.0,0.05,null,null,null,null,null],[42200,58.7,8.0,56.0,0.0,null,null,null,null,null],[42260,57.1,8.0,56.0,0.06,null,null,null,null,null],[42320,58.7,8.0,56.0,0.09,null,null,null,null,null],[42380,58.2,8.0,56.0,0.06,null,null,null,null,null],[42440,58.2,8.0,56.0,0.01,null,null,null,null,null],[42500,69.2,8.0,56.0,0.08,null,null,null,null,null],[42560,76.3,8.0,56.0,0.0,null,null,null,null,null],[42620,74.7,8.0,56.0,0.02,null,null,null,null,null],[42680,75.2,8.0,56.0,0.0,null,null,null,null,null],[42740,73.6,8.0,56.0,0.07,null,null,null,null,null],[42800,73.0,8.0,56.0,0.01,null,null,null,null,null],[42860,70.8,8.0,56.0,0.37,null,null,null,null,null],[42920,72.5,8.0,56.0,0.0,null,null,null,null,null],[42980,71.4,8.0,56.0,0.16,null,null,null,null,null],[43040,70.3,8.0,56.0,0.05,null,null,null,null,null],[43100,64.8,8.0,56.0,0.08,null,null,null,null,null],[43160,62.6,8.0,56.0,0.0,null,null,null,null,null],[43220,59.3,8.0,56.0,0.05,null,null,null,null,null],[43280,58.7,8.0,56.0,0.08,null,null,null,null,null],[43340,60.4,8.0,56.0,0.07,null,null,null,null,null],[43400,58.2,8.0,56.0,0.0,null,null,null,null,null],[43460,60.4,8.0,56.0,0.1,null,null,null,null,null],[43520,59.8,8.0,56.0,0.0,null,null,null,null,null],[43580,58.2,8.0,56.0,0.1,null,null,null,null,null],[43640,57.6,8.0,56.0,0.0,null,null,null,null,null],[43700,57.1,8.0,56.0,0.05,null,null,null,null,null],[43760,58.7,8.0,56.0,0.06,null,null,null,null,null],[43820,57.1,8.0,56.0,0.11,null,null,null,null,null],[43880,57.6,8.0,56.0,0.02,null,null,null,null,null],[43940,57.1,8.0,56.0,0.06,null,null,null,null,null],[44000,64.2,8.0,56.0,0.0,null,null,null,null,null],[44060,73.0,8.0,56.0,0.0,null,null,null,null,null],[44120,77.4,8.0,56.0,0.0,null,null,null,null,null],[44180,65.9,8.0,56.0,0.06,null,null,null,null,null],[44240,64.8,8.0,56.0,0.03,null,null,null,null,null],[44300,65.3,8.0,56.0,0.06,null,null,null,null,null],[44360,70.3,8.0,56.0,0.01,null,null,null,null,null],[44420,71.9,8.0,56.0,0.01,null,null,null,null,null],[44480,71.9,8.0,56.0,0.05,null,null,null,null,null],[44540,71.4,8.0,56.0,0.0,null,null,null,null,null],[44600,69.7,8.0,56.0,0.14,null,null,null,null,null],[44660,61.5,8.0,56.0,0.0,null,null,null,null,null],[44720,58.7,8.0,56.0,0.32,null,null,null,null,null],[44780,57.6,8.0,56.0,0.05,null,null,null,null,null],[44840,57.6,8.0,56.0,0.09,null,null,null,null,null],[44900,57.6,8.0,56.0,0.02,null,null,null,null,null],[44960,58.2,8.0,56.0,0.08,null,null,null,null,null],[45020,57.1,8.0,56.0,0.0,null,null,null,null,null],[45080,58.7,8.0,56.0,0.11,null,null,null,null,null],[45140,58.2,8.0,56.0,0.0,null,null,null,null,null],[45200,57.6,8.0,56.0,0.08,null,null,null,null,null],[45260,57.6,8.0,56.0,0.02,null,null,null,null,null],[45320,59.3,8.0,56.0,0.0,null,null,null,null,null],[45380,68.1,8.0,56.0,0.0,null,null,null,null,null],[45440,73.6,8.0,56.0,0.08,null,null,null,null,null],[45500,76.3,8.0,56.0,0.0,null,null,null,null,null],[45560,75.2,8.0,56.0,0.06,null,null,null,null,null],[45620,73.0,8.0,56.0,0.0,null,null,null,null,null],[45680,75.7,8.0,56.0,0.1,null,null,null,null,null],[45740,69.7,8.0,56.0,0.01,null,null,null,null,null],[45800,71.4,8.0,56.0,0.17,null,null,null,null,null],[45860,71.9,8.0,56.0,0.0,null,null,null,null,null],[45920,73.0,8.0,56.0,0.11,null,null,null,null,null],[45980,71.9,8.0,56.0,0.0,null,null,null,null,null],[46040,65.9,8.0,56.0,0.16,null,null,null,null,null],[46100,59.8,8.0,56.0,0.01,null,null,null,null,null],[46160,59.8,8.0,56.0,0.0,null,null,null,null,null],[46220,60.9,8.0,56.0,0.04,null,null,null,null,null],[46280,59.3,8.0,56.0,0.0,null,null,null,null,null],[46340,57.6,8.0,56.0,0.04,null,null,null,null,null],[46400,59.3,8.0,56.0,0.17,null,null,null,null,null],[46460,56.0,8.0,56.0,0.01,null,null,null,null,null],[46520,57.1,8.0,56.0,0.0,null,null,null,null,null],[46580,57.6,8.0,56.0,0.0,null,null,null,null,null],[46640,58.7,8.0,56.0,0.16,null,null,null,null,null],[46700,56.5,8.0,56.0,0.02,null,null,null,null,null],[46760,59.3,8.0,56.0,0.07,null,null,null,null,null],[46820,65.3,8.0,56.0,0.01,null,null,null,null,null],[46880,70.3,8.0,56.0,0.0,null,null,null,null,null],[46940,69.7,8.0,56.0,0.0,null,null,null,null,null],[47000,67.0,8.0,56.0,0.0,null,null,null,null,null],[47060,69.2,8.0,56.0,0.08,null,null,null,null,null],[47120,66.4,8.0,56.0,0.04,null,null,null,null,null],[47180,69.7,8.0,56.0,0.1,null,null,null,null,null],[47240,76.8,8.0,56.0,0.84,null,null,null,null,null],[47300,73.6,8.0,56.0,0.05,null,null,null,null,null],[47360,73.0,8.0,56.0,0.0,null,null,null,null,null],[47420,69.7,8.0,56.0,0.08,null,null,null,null,null],[47480,64.8,8.0,56.0,0.02,null,null,null,null,null],[47540,60.4,8.0,56.0,0.03,null,null,null,null,null],[47600,59.8,8.0,56.0,0.03,null,null,null,null,null],[47660,60.4,8.0,56.0,0.14,null,null,null,null,null],[47720,61.5,8.0,56.0,0.06,null,null,null,null,null],[47780,58.7,8.0,56.0,0.01,null,null,null,null,null],[47840,58.2,8.0,56.0,0.01,null,null,null,null,null],[47900,58.7,8.0,56.0,0.09,null,null,null,null,null],[47960,59.3,8.0,56.0,0.04,null,null,null,null,null],[48020,58.7,8.0,56.0,0.05,null,null,null,null,null],[48080,58.7,8.0,56.0,0.01,null,null,null,null,null],[48140,57.6,8.0,56.0,0.09,null,null,null,null,null],[48200,58.7,8.0,56.0,0.34,null,null,null,null,null],[48260,66.4,8.0,56.0,0.04,null,null,null,null,null],[48320,76.3,8.0,56.0,0.0,null,null,null,null,null],[48380,77.9,8.0,56.0,0.25,null,null,null,null,null],[48440,71.9,8.0,56.0,0.0,null,null,null,null,null],[48500,73.0,8.0,56.0,0.04,null,null,null,null,null],[48560,73.0,8.0,56.0,0.0,null,null,null,null,null],[48620,71.9,8.0,56.0,0.15,null,null,null,null,null],[48680,70.3,8.0,56.0,0.31,null,null,null,null,null],[48740,71.9,8.0,56.0,0.02,null,null,null,null,null],[48800,72.5,8.0,56.0,0.0,null,null,null,null,null],[48860,71.9,8.0,56.0,0.47,null,null,null,null,null],[48920,66.4,8.0,56.0,0.0,null,null,null,null,null],[48980,60.9,8.0,56.0,0.05,null,null,null,null,null],[49040,59.8,8.0,56.0,0.06,null,null,null,null,null],[49100,62.0,8.0,56.0,0.15,null,null,null,null,null],[49160,58.7,8.0,56.0,0.88,null,null,null,null,null],[49220,59.3,8.0,56.0,0.19,null,null,null,null,null],[49280,58.2,8.0,56.0,0.0,null,null,null,null,null],[49340,58.2,8.0,56.0,0.05,null,null,null,null,null],[49400,57.1,8.0,56.0,0.01,null,null,null,null,null],[49460,56.5,8.0,56.0,0.16,null,null,null,null,null],[49520,56.5,8.0,56.0,0.0,null,null,null,null,null],[49580,56.5,8.0,56.0,0.18,null,null,null,null,null],[49640,57.6,8.0,56.0,0.16,null,null,null,null,null],[49700,57.6,8.0,56.0,0.06,null,null,null,null,null],[49760,62.6,8.0,56.0,0.0,null,null,null,null,null],[49820,69.7,8.0,56.0,0.01,null,null,null,null,null],[49880,70.3,8.0,56.0,0.17,null,null,null,null,null],[49940,76.8,8.0,56.0,0.02,null,null,null,null,null],[50000,73.6,8.0,56.0,0.07,null,null,null,null,null],[50060,71.9,8.0,56.0,0.03,null,null,null,null,null],[50120,71.9,8.0,56.0,0.21,null,null,null,null,null],[50180,68.1,8.0,56.0,0.34,null,null,null,null,null],[50240,69.2,8.0,56.0,0.1,null,null,null,null,null],[50300,67.5,8.0,56.0,0.19,null,null,null,null,null],[50360,62.0,8.0,56.0,0.08,null,null,null,null,null],[50420,60.4,8.0,56.0,0.12,null,null,null,null,null],[50480,60.4,8.0,56.0,0.08,null,null,null,null,null],[50540,62.6,8.0,56.0,0.1,null,null,null,null,null],[50600,59.3,8.0,56.0,0.27,null,null,null,null,null],[50660,58.7,9.0,56.0,0.4,null,null,null,null,null],[50720,58.2,9.0,56.0,0.01,null,null,null,null,null],[50780,55.4,9.0,56.0,0.0,null,null,null,null,null],[50840,57.6,9.0,56.0,0.03,null,null,null,null,null],[50900,56.5,9.0,56.0,0.0,null,null,null,null,null],[50960,56.0,9.0,56.0,0.17,null,null,null,null,null],[51020,56.5,9.0,56.0,0.04,null,null,null,null,null],[51080,56.0,9.0,56.0,0.13,null,null,null,null,null],[51140,55.4,9.0,56.0,0.83,null,null,null,null,null],[51200,57.1,9.0,56.0,0.09,null,null,null,null,null],[51260,56.5,9.0,56.0,0.03,null,null,null,null,null],[51320,57.6,9.0,56.0,0.06,null,null,null,null,null],[51380,58.7,9.0,56.0,0.0,null,null,null,null,null],[51440,57.6,9.0,56.0,0.06,null,null,null,null,null],[51500,57.6,9.0,56.0,0.0,null,null,null,null,null],[51560,59.8,9.0,56.0,0.17,null,null,null,null,null],[51620,58.2,9.0,56.0,0.32,null,null,null,null,null],[51680,58.2,9.0,56.0,0.0,null,null,null,null,null],[51740,58.7,9.0,56.0,0.0,null,null,null,null,null],[51800,57.1,9.0,56.0,0.0,null,null,null,null,null],[51860,57.6,9.0,56.0,0.0,null,null,null,null,null],[51920,57.1,9.0,56.0,0.0,null,null,null,null,null],[51980,56.5,9.0,56.0,0.01,null,null,null,null,null],[52040,57.1,9.0,56.0,0.02,null,null,null,null,null],[52100,57.1,9.0,56.0,0.21,null,null,null,null,null],[52160,57.1,9.0,56.0,0.12,null,null,null,null,null],[52220,57.1,9.0,56.0,0.0,null,null,null,null,null],[52280,57.1,9.0,56.0,0.0,null,null,null,null,null],[52340,57.6,9.0,56.0,0.07,null,null,null,null,null],[52400,57.6,9.0,56.0,0.0,null,null,null,null,null],[52460,57.6,9.0,56.0,0.14,null,null,null,null,null],[52520,58.7,9.0,56.0,0.01,null,null,null,null,null],[52580,60.4,9.0,56.0,0.11,null,null,null,null,null],[52640,60.4,9.0,56.0,0.17,null,null,null,null,null],[52700,68.1,9.0,56.0,0.0,null,null,null,null,null],[52760,64.8,9.0,56.0,0.0,null,null,null,null,null],[52820,69.2,9.0,56.0,0.02,null,null,null,null,null],[52880,69.2,9.0,56.0,0.01,null,null,null,null,null],[52940,62.0,9.0,56.0,0.0,null,null,null,null,null],[53000,63.1,9.0,56.0,0.07,null,null,null,null,null],[53060,67.0,9.0,56.0,0.08,null,null,null,null,null],[53120,62.6,9.0,56.0,0.22,null,null,null,null,null],[53180,58.7,9.0,56.0,0.0,null,null,null,null,null],[53240,58.7,9.0,56.0,0.04,null,null,null,null,null],[53300,59.3,9.0,56.0,0.22,null,null,null,null,null],[53360,58.7,9.0,56.0,0.07,null,null,null,null,null],[53420,59.3,9.0,56.0,0.0,null,null,null,null,null],[53480,58.2,9.0,56.0,0.11,null,null,null,null,null],[53540,58.2,9.0,56.0,0.2,null,null,null,null,null],[53600,58.7,9.0,56.0,0.34,null,null,null,null,null],[53660,57.6,9.0,56.0,0.0,null,null,null,null,null],[53720,58.7,9.0,56.0,0.08,null,null,null,null,null],[53780,58.7,9.0,56.0,0.1,null,null,null,null,null],[53840,59.8,9.0,56.0,0.06,null,null,null,null,null],[53900,57.6,9.0,56.0,0.0,null,null,null,null,null],[53960,58.7,9.0,56.0,0.03,null,null,null,null,null],[54020,58.7,9.0,56.0,0.02,null,null,null,null,null],[54080,66.4,9.0,56.0,0.32,null,null,null,null,null],[54140,71.9,9.0,56.0,0.0,null,null,null,null,null],[54200,67.0,9.0,56.0,0.06,null,null,null,null,null],[54260,69.2,9.0,56.0,0.02,null,null,null,null,null],[54320,69.2,9.0,56.0,0.08,null,null,null,null,null],[54380,69.7,9.0,56.0,0.01,null,null,null,null,null],[54440,69.2,9.0,56.0,0.15,null,null,null,null,null],[54500,72.5,9.0,56.0,0.14,null,null,null,null,null],[54560,67.5,9.0,56.0,0.28,null,null,null,null,null],[54620,66.4,9.0,56.0,0.0,null,null,null,null,null],[54680,63.7,9.0,56.0,0.03,null,null,null,null,null],[54740,60.4,9.0,56.0,0.01,null,null,null,null,null],[54800,58.7,9.0,56.0,0.07,null,null,null,null,null],[54860,60.4,9.0,56.0,0.0,null,null,null,null,null],[54920,58.7,9.0,56.0,0.05,null,null,null,null,null],[54980,58.2,9.0,56.0,0.02,null,null,null,null,null],[55040,58.2,9.0,56.0,0.18,null,null,null,null,null],[55100,58.2,9.0,56.0,0.09,null,null,null,null,null],[55160,58.7,9.0,56.0,0.0,null,null,null,null,null],[55220,57.6,9.0,56.0,0.05,null,null,null,null,null],[55280,57.1,9.0,56.0,0.0,null,null,null,null,null],[55340,57.1,9.0,56.0,0.07,null,null,null,null,null],[55400,58.2,9.0,56.0,0.04,null,null,null,null,null],[55460,64.2,9.0,56.0,0.08,null,null,null,null,null],[55520,71.4,9.0,56.0,0.38,null,null,null,null,null],[55580,70.3,9.0,56.0,0.22,null,null,null,null,null],[55640,70.3,9.0,56.0,0.0,null,null,null,null,null],[55700,69.2,9.0,56.0,0.2,null,null,null,null,null],[55760,70.3,9.0,56.0,0.0,null,null,null,null,null],[55820,67.0,9.0,56.0,0.08,null,null,null,null,null],[55880,67.5,9.0,56.0,0.02,null,null,null,null,null],[55940,70.8,9.0,56.0,0.05,null,null,null,null,null],[56000,66.4,9.0,56.0,0.1,null,null,null,null,null],[56060,64.8,9.0,56.0,0.05,null,null,null,null,null],[56120,64.2,9.0,56.0,0.06,null,null,null,null,null],[56180,59.8,9.0,56.0,0.0,null,null,null,null,null],[56240,59.3,9.0,56.0,0.03,null,null,null,null,null],[56300,58.2,9.0,56.0,0.01,null,null,null,null,null],[56360,60.4,9.0,56.0,0.01,null,null,null,null,null],[56420,59.8,9.0,56.0,0.09,null,null,null,null,null],[56480,58.7,9.0,56.0,0.02,null,null,null,null,null],[56540,57.6,9.0,56.0,0.44,null,null,null,null,null],[56600,58.7,9.0,56.0,0.0,null,null,null,null,null],[56660,57.6,9.0,56.0,0.07,null,null,null,null,null],[56720,57.6,9.0,56.0,0.02,null,null,null,null,null],[56780,58.7,9.0,56.0,0.53,null,null,null,null,null],[56840,57.1,9.0,56.0,0.0,null,null,null,null,null],[56900,60.4,9.0,56.0,0.06,null,null,null,null,null],[56960,64.2,9.0,56.0,0.03,null,null,null,null,null],[57020,72.5,9.0,56.0,0.43,null,null,null,null,null],[57080,70.8,9.0,56.0,0.0,null,null,null,null,null],[57140,70.3,9.0,56.0,0.0,null,null,null,null,null],[57200,70.3,9.0,56.0,0.08,null,null,null,null,null],[57260,71.9,9.0,56.0,0.08,null,null,null,null,null],[57320,70.8,9.0,56.0,0.0,null,null,null,null,null],[57380,73.6,9.0,56.0,0.02,null,null,null,null,null],[57440,72.5,9.0,56.0,0.0,null,null,null,null,null],[57500,69.7,9.0,56.0,0.32,null,null,null,null,null],[57560,64.2,9.0,56.0,0.0,null,null,null,null,null],[57620,60.9,9.0,56.0,0.0,null,null,null,null,null],[57680,60.4,9.0,56.0,0.0,null,null,null,null,null],[57740,59.3,9.0,56.0,0.17,null,null,null,null,null],[57800,59.3,9.0,56.0,0.0,null,null,null,null,null],[57860,58.7,9.0,56.0,0.02,null,null,null,null,null],[58571,70.3,9.0,46.0,0.15,20.0,12.5,6.9,null,null],[58630,78.5,9.0,46.0,2.35,20.1,12.5,6.9,null,null],[58690,73.6,9.0,46.0,0.4,20.1,12.5,6.9,null,null],[58750,73.0,9.0,46.0,0.31,20.1,12.5,6.9,null,null],[58810,71.9,9.0,46.0,0.05,20.0,12.5,6.9,null,null],[58870,71.4,9.0,46.0,0.06,20.0,12.5,6.9,null,null],[58930,67.0,9.0,46.0,0.05,20.0,12.5,6.9,null,null],[58990,65.9,9.0,46.0,0.12,20.0,12.6,6.9,null,null],[59050,60.9,9.0,46.0,0.07,20.0,12.6,6.9,null,null],[59110,60.4,9.0,46.0,0.04,20.0,12.6,6.9,null,null],[59170,59.8,9.0,46.0,0.33,20.1,12.6,6.9,null,null],[59230,58.2,9.0,46.0,0.07,20.1,12.6,6.9,null,null],[59290,60.4,9.0,46.0,0.18,20.1,12.6,6.9,null,null],[59350,57.6,9.0,46.0,0.07,20.1,12.7,6.9,null,null],[59360,58.7,9.0,56.0,0.11,20.1,12.7,6.9,null,null],[59420,58.7,9.0,56.0,0.06,20.1,12.7,6.9,null,null],[59480,59.3,10.0,56.0,0.41,20.3,12.7,6.9,null,null],[59540,59.3,10.0,56.0,0.16,20.3,12.7,6.9,null,null],[59600,58.7,10.0,56.0,0.0,20.3,12.7,6.9,null,null],[59660,60.9,10.0,56.0,0.19,20.3,12.7,6.9,null,null],[59720,59.3,10.0,56.0,0.01,20.3,12.7,6.9,null,null],[59780,64.2,10.0,56.0,0.11,20.3,12.8,6.9,null,null],[59840,64.2,10.0,56.0,0.0,20.4,12.8,6.9,null,null],[59900,63.1,10.0,56.0,0.26,20.4,12.8,6.9,null,null],[59960,73.6,10.0,56.0,0.05,20.4,12.8,6.9,null,null],[60020,71.9,10.0,56.0,0.1,20.4,12.8,6.9,null,null],[60080,72.5,10.0,56.0,0.15,20.4,12.8,6.9,null,null],[60140,64.8,10.0,56.0,0.08,20.4,12.8,6.9,null,null],[60200,63.7,10.0,56.0,0.06,20.4,12.9,6.9,null,null],[60260,63.1,10.0,56.0,0.1,20.3,12.9,6.9,null,null],[60320,62.6,10.0,56.0,0.13,20.3,12.9,6.9,null,null],[60380,68.6,10.0,56.0,0.08,20.5,12.9,6.9,null,null],[60440,61.5,10.0,56.0,0.07,20.5,12.9,6.9,null,null],[60500,60.4,10.0,56.0,0.24,20.5,12.9,6.9,null,null],[60560,62.0,10.0,56.0,0.3,20.5,12.9,6.9,null,null],[60620,59.8,10.0,56.0,0.06,20.5,13.0,6.9,null,null],[60680,59.3,10.0,56.0,0.0,20.6,13.0,6.9,null,null],[60740,59.3,10.0,56.0,0.01,20.6,13.0,6.9,null,null],[60800,59.8,10.0,56.0,0.0,20.6,13.0,6.9,null,null],[60860,58.2,10.0,56.0,0.29,20.6,13.0,6.9,null,null],[60920,59.3,10.0,56.0,0.03,20.6,13.0,6.9,null,null],[60980,58.2,10.0,56.0,0.1,20.6,13.0,6.9,null,null],[61040,60.4,10.0,56.0,0.0,20.6,13.1,6.9,null,null],[61100,60.4,10.0,56.0,0.15,20.7,13.1,6.9,null,null],[61160,59.8,10.0,56.0,0.12,20.7,13.1,6.9,null,null],[61220,71.9,10.0,56.0,0.26,20.7,13.1,6.9,null,null],[61280,72.5,10.0,56.0,0.0,20.7,13.1,6.9,null,null],[61340,73.6,10.0,56.0,0.02,20.7,13.1,6.9,null,null],[61400,73.6,10.0,56.0,0.01,20.7,13.1,6.9,null,null],[61460,71.9,10.0,56.0,0.17,20.7,13.2,6.9,null,null],[61520,73.6,10.0,56.0,0.13,20.8,13.2,6.9,null,null],[61580,72.5,10.0,56.0,0.05,20.8,13.2,6.9,null,null],[61640,65.3,10.0,56.0,0.03,20.8,13.2,6.9,null,null],[61700,66.4,10.0,56.0,0.09,20.7,13.2,6.9,null,null],[61760,57.6,10.0,56.0,0.07,20.7,13.2,6.9,null,null],[61820,57.1,10.0,56.0,0.05,20.7,13.2,6.9,null,null],[61880,56.5,10.0,56.0,0.25,20.7,13.3,6.9,null,null],[61940,57.6,10.0,56.0,0.31,20.7,13.3,6.9,null,null],[62000,57.1,10.0,56.0,0.13,20.8,13.3,6.9,null,null],[62060,57.1,10.0,56.0,0.09,20.8,13.3,6.9,null,null],[62120,57.6,10.0,56.0,0.02,20.9,13.3,6.9,null,null],[62180,57.6,10.0,56.0,0.39,20.9,13.3,6.9,null,null],[63230,73.0,10.0,25.0,0.2,21.2,13.6,6.9,2.0,null],[63285,68.6,10.0,21.0,0.08,21.2,13.6,6.9,0.0,null],[63345,63.1,10.0,21.0,0.09,21.2,13.6,6.9,0.0,null],[63405,60.4,10.0,21.0,0.05,21.2,13.6,6.9,0.0,null],[63465,59.3,10.0,21.0,0.1,21.2,13.6,6.9,0.0,null],[63525,59.8,10.0,21.0,0.21,21.2,13.6,6.9,0.0,null],[63585,58.7,10.0,21.0,0.14,21.3,13.7,6.9,0.0,null],[63645,58.2,10.0,21.0,0.37,21.3,13.7,6.9,0.0,null],[63680,56.5,10.0,56.0,0.12,21.3,13.7,6.9,0.0,null],[63740,57.1,10.0,56.0,0.01,21.3,13.7,6.9,0.0,null],[63800,56.0,10.0,56.0,0.08,21.3,13.7,6.9,0.0,null],[63860,60.9,10.0,56.0,0.1,21.3,13.7,6.9,0.0,null],[63920,58.2,10.0,56.0,0.13,21.3,13.7,6.9,0.0,null],[63980,58.7,10.0,56.0,0.07,21.4,13.8,6.9,0.0,null],[64040,58.2,10.0,56.0,0.01,21.4,13.8,6.9,0.0,null],[64100,68.6,10.0,56.0,0.04,21.4,13.8,6.9,0.0,null],[64160,74.1,10.0,56.0,0.09,21.4,13.8,6.9,0.0,null],[64220,73.6,10.0,56.0,0.04,21.4,13.8,6.9,0.0,null],[64280,75.7,10.0,56.0,0.09,21.4,13.8,6.9,0.0,null],[64340,70.8,10.0,56.0,0.17,21.4,13.8,6.9,0.0,null],[64400,69.7,10.0,56.0,0.04,21.5,13.9,6.9,0.0,null],[64460,70.8,10.0,56.0,0.09,21.5,13.9,6.9,0.0,null],[64520,71.9,10.0,56.0,0.03,21.5,13.9,6.9,0.0,null],[64580,71.9,10.0,56.0,0.11,21.4,13.9,6.9,0.0,null],[64640,74.7,10.0,56.0,0.03,21.4,13.9,6.9,0.0,null],[64700,68.6,10.0,56.0,0.02,21.4,13.9,6.9,0.0,null],[64760,64.2,10.0,56.0,0.1,21.4,13.9,6.9,0.0,null],[64820,62.0,10.0,56.0,0.01,21.4,14.0,6.9,0.0,null],[64880,63.1,10.0,56.0,0.08,21.4,14.0,6.9,0.0,null],[64940,62.0,10.0,56.0,0.07,21.5,14.0,6.9,0.0,null],[65000,59.8,10.0,56.0,0.07,21.5,14.0,6.9,0.0,null],[65060,60.9,10.0,56.0,0.05,21.5,14.0,6.9,0.0,null],[65120,60.9,10.0,56.0,0.13,21.5,14.0,6.9,0.0,null],[65180,59.8,10.0,56.0,0.04,21.5,14.0,6.9,0.0,null],[65240,57.6,10.0,56.0,0.05,21.5,14.1,6.9,0.0,null],[65300,57.1,10.0,56.0,0.07,21.7,14.1,6.9,0.0,null],[65360,58.7,10.0,56.0,0.26,21.7,14.1,6.9,0.0,null],[65420,58.7,10.0,56.0,0.09,21.7,14.1,6.9,0.0,null],[65480,59.3,10.0,56.0,0.05,21.7,14.1,6.9,0.0,null],[65540,63.1,10.0,56.0,0.04,21.7,14.1,6.9,0.0,null],[65600,69.2,10.0,56.0,0.05,21.7,14.1,6.9,0.0,null],[65660,70.3,10.0,56.0,0.06,21.8,14.2,6.9,0.0,null],[65720,69.2,10.0,56.0,0.15,21.8,14.2,6.9,0.0,null],[65780,72.5,10.0,56.0,0.13,21.8,14.2,6.9,0.0,null],[65840,71.4,10.0,56.0,0.11,21.8,14.2,6.9,0.0,null],[65900,71.4,10.0,56.0,0.04,21.8,14.2,6.9,0.0,null],[65960,63.7,10.0,56.0,0.11,21.8,14.2,6.9,0.0,null],[66020,68.6,10.0,56.0,0.01,21.7,14.2,6.9,0.0,null],[66080,62.6,10.0,56.0,0.0,21.7,14.3,6.9,0.0,null],[66140,57.1,10.0,56.0,0.05,21.7,14.3,6.9,0.0,null],[66200,56.5,10.0,56.0,0.1,21.8,14.3,6.9,0.0,null],[66260,57.1,10.0,56.0,0.09,21.8,14.3,6.9,0.0,null],[66320,58.2,10.0,56.0,0.14,21.8,14.3,6.9,0.0,null],[66380,56.5,10.0,56.0,0.3,21.8,14.3,6.9,0.0,null],[66440,57.1,10.0,56.0,0.06,21.8,14.3,6.9,0.0,null],[66500,56.5,10.0,56.0,0.12,21.8,14.4,6.9,0.0,null],[66560,57.1,10.0,56.0,0.1,21.8,14.4,6.9,0.0,null],[66620,59.3,10.0,56.0,0.08,21.9,14.4,6.9,0.0,null],[66680,56.5,10.0,56.0,0.04,21.9,14.4,6.9,0.0,null],[66740,57.6,10.0,56.0,0.11,21.9,14.4,6.9,0.0,null],[66800,57.1,10.0,56.0,0.03,21.9,14.4,6.9,0.0,null],[66860,57.1,10.0,56.0,0.09,22.0,14.4,6.9,0.0,null],[66920,58.2,10.0,56.0,0.02,22.1,14.5,6.9,0.0,null],[66980,61.5,10.0,56.0,0.27,22.1,14.5,6.9,0.0,null],[67040,75.2,10.0,56.0,0.02,22.1,14.5,6.9,0.0,null],[67100,73.6,10.0,56.0,0.07,22.1,14.5,6.9,0.0,null],[67160,72.5,10.0,56.0,0.0,22.1,14.5,6.9,0.0,null],[67220,69.2,10.0,56.0,0.1,22.1,14.5,6.9,0.0,null],[67280,70.3,10.0,56.0,0.0,22.1,14.5,6.9,0.0,null],[67340,65.3,10.0,56.0,0.07,22.2,14.5,6.9,0.0,null],[67400,60.4,10.0,56.0,0.0,22.2,14.6,6.9,0.0,null],[67460,63.1,10.0,56.0,0.21,22.2,14.6,6.9,0.0,null],[67520,63.1,10.0,56.0,0.07,22.2,14.6,6.9,0.0,null],[67580,67.5,10.0,56.0,0.1,22.2,14.6,6.9,0.0,null],[67640,60.4,10.0,56.0,0.0,22.2,14.6,6.9,0.0,null],[67700,59.3,10.0,56.0,0.22,22.2,14.6,6.9,0.0,null],[67760,58.2,10.0,56.0,0.01,22.3,14.7,6.9,0.0,null],[67820,57.1,10.0,56.0,0.05,22.3,14.7,6.9,0.0,null],[67880,57.6,10.0,56.0,0.11,22.3,14.7,6.9,0.0,null],[67940,58.2,10.0,56.0,0.02,22.3,14.7,6.9,0.0,null],[68000,56.0,10.0,56.0,0.01,22.3,14.7,6.9,0.0,null],[68060,56.0,10.0,56.0,0.18,22.3,14.7,6.9,0.0,null],[68120,56.0,10.0,56.0,0.06,22.3,14.7,6.9,0.0,null],[68180,57.1,10.0,56.0,0.39,22.4,14.8,6.9,0.0,null],[68240,58.2,10.0,56.0,0.02,22.4,14.8,6.9,0.0,null],[68300,57.1,10.0,56.0,0.16,22.4,14.8,6.9,0.0,null],[68360,57.6,10.0,56.0,0.0,22.4,14.8,6.9,0.0,null],[68420,67.0,10.0,56.0,0.06,22.4,14.8,6.9,0.0,null],[68480,64.8,10.0,56.0,0.31,22.4,14.8,6.9,0.0,null],[68540,70.8,10.0,56.0,0.08,22.4,14.8,6.9,0.0,null],[68600,71.9,10.0,56.0,0.03,22.5,14.8,6.9,0.0,null],[68660,70.8,11.0,56.0,0.0,22.5,14.9,6.9,0.0,null],[68720,64.8,11.0,56.0,0.04,22.5,14.9,6.9,0.0,null],[68780,67.5,11.0,56.0,0.17,22.5,14.9,6.9,0.0,null],[68840,67.5,11.0,56.0,0.1,22.5,14.9,6.9,0.0,null],[68900,63.7,10.0,56.0,0.04,22.4,14.9,6.9,0.0,null],[68960,64.2,10.0,56.0,0.08,22.4,14.9,6.9,0.0,null],[69020,62.6,10.0,56.0,0.15,22.4,15.0,6.9,0.0,null],[69080,59.3,10.0,56.0,0.11,22.4,15.0,6.9,0.0,null],[69140,56.5,11.0,56.0,0.04,22.6,15.0,6.9,0.0,null],[69200,57.1,11.0,56.0,0.05,22.6,15.0,6.9,0.0,null],[69260,56.5,11.0,56.0,0.03,22.6,15.0,6.9,0.0,null],[69320,57.6,11.0,56.0,0.12,22.6,15.0,6.9,0.0,null],[69380,57.6,11.0,56.0,0.03,22.6,15.0,6.9,0.0,null],[69440,57.6,11.0,56.0,0.15,22.7,15.0,6.9,0.0,null],[69500,58.7,11.0,56.0,0.04,22.7,15.1,6.9,0.0,null],[69560,57.1,11.0,56.0,0.07,22.7,15.1,6.9,0.0,null],[69620,58.2,11.0,56.0,0.03,22.7,15.1,6.9,0.0,null],[69680,56.0,11.0,56.0,0.02,22.7,15.1,6.9,0.0,null],[69740,57.6,11.0,56.0,0.05,22.7,15.1,6.9,0.0,null],[69800,57.6,11.0,56.0,0.21,22.7,15.1,6.9,0.0,null],[69860,59.3,11.0,56.0,0.12,22.8,15.2,6.9,0.0,null],[69920,62.0,11.0,56.0,0.11,22.8,15.2,6.9,0.0,null],[69980,59.8,11.0,56.0,0.03,22.8,15.2,6.9,0.0,null],[70040,56.5,11.0,56.0,0.05,22.8,15.2,6.9,0.0,null],[70100,57.6,11.0,56.0,0.07,22.8,15.2,6.9,0.0,null],[70160,65.3,11.0,56.0,0.1,22.8,15.2,6.9,0.0,null],[70220,64.2,11.0,56.0,0.08,22.8,15.2,6.9,0.0,null],[70280,65.9,11.0,56.0,0.1,22.9,15.2,6.9,0.0,null],[70340,62.0,11.0,56.0,0.09,22.7,15.3,6.9,0.0,null],[70400,58.7,11.0,56.0,0.09,22.8,15.3,6.9,0.0,null],[70460,57.1,11.0,56.0,0.13,22.8,15.3,6.9,0.0,null],[70520,57.1,11.0,56.0,0.21,22.8,15.3,6.9,0.0,null],[70580,57.6,11.0,56.0,0.1,22.8,15.3,6.9,0.0,null],[70640,57.1,11.0,56.0,0.07,22.8,15.3,6.9,0.0,null],[70700,58.2,11.0,56.0,0.28,22.8,15.4,6.9,0.0,null],[70760,56.5,11.0,56.0,0.11,22.8,15.4,6.9,0.0,null],[70820,57.1,11.0,56.0,0.14,22.9,15.4,6.9,0.0,null],[70880,57.1,11.0,56.0,0.12,22.9,15.4,6.9,0.0,null],[70940,56.5,11.0,56.0,0.05,22.9,15.4,6.9,0.0,null],[71000,56.5,11.0,56.0,0.08,22.9,15.4,6.9,0.0,null],[71060,57.6,11.0,56.0,0.01,22.9,15.4,6.9,0.0,null],[71120,58.7,11.0,56.0,0.2,23.1,15.5,6.9,0.0,null],[71180,56.5,11.0,56.0,0.07,23.1,15.5,6.9,0.0,null],[71240,57.6,11.0,56.0,0.11,23.1,15.5,6.9,0.0,null],[71300,64.2,11.0,56.0,0.14,23.1,15.5,6.9,0.0,null],[71360,64.2,11.0,56.0,0.08,23.1,15.5,6.9,0.0,null],[71420,73.6,11.0,56.0,0.09,23.1,15.5,6.9,0.0,null],[71480,69.7,11.0,56.0,0.06,23.1,15.5,6.9,0.0,null],[71540,67.0,11.0,56.0,0.06,23.2,15.5,6.9,0.0,null],[71600,68.6,11.0,56.0,0.04,23.2,15.6,6.9,0.0,null],[71660,68.6,11.0,56.0,0.07,23.2,15.6,6.9,0.0,null],[71720,62.0,11.0,56.0,0.15,23.2,15.6,6.9,0.0,null],[71780,56.0,11.0,56.0,0.11,23.1,15.6,6.9,0.0,null],[71840,58.7,11.0,56.0,0.03,23.1,15.6,6.9,0.0,null],[71900,58.2,11.0,56.0,0.06,23.1,15.6,6.9,0.0,null],[71960,57.1,11.0,56.0,0.02,23.3,15.7,6.9,0.0,null],[72020,56.5,11.0,56.0,0.11,23.3,15.7,6.9,0.0,null],[72080,57.1,11.0,56.0,0.33,23.3,15.7,6.9,0.0,null],[72140,57.1,11.0,56.0,0.1,23.3,15.7,6.9,0.0,null],[72200,57.1,11.0,56.0,0.21,23.3,15.7,6.9,0.0,null],[72260,57.6,11.0,56.0,0.09,23.3,15.7,6.9,0.0,null],[72320,57.1,11.0,56.0,0.11,23.3,15.7,6.9,0.0,null],[72380,57.6,11.0,56.0,0.2,23.4,15.8,6.9,0.0,null],[72440,56.0,11.0,56.0,0.13,23.4,15.8,6.9,0.0,null],[72500,57.1,11.0,56.0,0.06,23.4,15.8,6.9,0.0,null],[72560,56.5,11.0,56.0,0.04,23.4,15.8,6.9,0.0,null],[72620,57.6,11.0,56.0,0.0,23.4,15.8,6.9,0.0,null],[72680,56.5,11.0,56.0,0.02,23.4,15.8,6.9,0.0,null],[72740,59.3,11.0,56.0,0.02,23.4,15.8,6.9,0.0,null],[72800,55.4,11.0,56.0,0.11,23.5,15.9,6.9,0.0,null],[72860,57.1,11.0,56.0,0.0,23.5,15.9,6.9,0.0,null],[72920,58.2,11.0,56.0,0.1,23.5,15.9,6.9,0.0,null],[72980,60.4,11.0,56.0,0.02,23.5,15.9,6.9,0.0,null],[73040,63.1,11.0,56.0,0.15,23.5,15.9,6.9,0.0,null],[73100,58.2,11.0,56.0,0.0,23.5,15.9,6.9,0.0,null],[73160,58.7,11.0,56.0,0.14,23.5,15.9,6.9,0.0,null],[73220,59.8,11.0,56.0,0.02,23.4,15.9,6.9,0.0,null],[73280,59.3,11.0,56.0,0.04,23.4,16.0,6.9,0.0,null],[73340,58.7,11.0,56.0,0.0,23.5,16.0,6.9,0.0,null],[73400,58.2,11.0,56.0,0.08,23.5,16.0,6.9,0.0,null],[73460,57.6,11.0,56.0,0.0,23.5,16.0,6.9,0.0,null],[73520,56.5,11.0,56.0,0.11,23.5,16.0,6.9,0.0,null],[73580,56.5,11.0,56.0,0.04,23.5,16.0,6.9,0.0,null],[73640,58.7,11.0,56.0,0.25,23.5,16.1,6.9,0.0,null],[73700,56.5,11.0,56.0,0.15,23.5,16.1,6.9,0.0,null],[73760,56.5,11.0,56.0,0.04,23.6,16.1,6.9,0.0,null],[73820,56.5,11.0,56.0,0.0,23.6,16.1,6.9,0.0,null],[73880,56.5,11.0,56.0,0.03,23.7,16.1,6.9,0.0,null],[73940,56.5,11.0,56.0,0.0,23.7,16.1,6.9,0.0,null],[74000,57.1,11.0,56.0,0.07,23.7,16.1,6.9,0.0,null],[74060,57.1,11.0,56.0,0.0,23.8,16.2,6.9,0.0,null],[74120,56.5,11.0,56.0,0.06,23.8,16.2,6.9,0.0,null],[74180,56.5,11.0,56.0,0.05,23.8,16.2,6.9,0.0,null],[74240,58.2,11.0,56.0,0.08,23.8,16.2,6.9,0.0,null],[74300,57.1,11.0,56.0,0.04,23.8,16.2,6.9,0.0,null],[74360,60.4,11.0,56.0,0.07,23.8,16.2,6.9,0.0,null],[74420,60.9,11.0,56.0,0.05,23.8,16.2,6.9,0.0,null],[74480,60.9,11.0,56.0,0.0,23.9,16.3,6.9,0.0,null],[74540,57.1,11.0,56.0,0.01,23.9,16.3,6.9,0.0,null],[74600,58.2,11.0,56.0,0.0,23.9,16.3,6.9,0.0,null],[74660,58.2,11.0,56.0,0.03,23.8,16.3,6.9,0.0,null],[74720,59.3,11.0,56.0,0.13,23.8,16.3,6.9,0.0,null],[74780,58.2,11.0,55.0,0.0,23.8,16.3,6.9,0.0,null],[74840,56.0,11.0,56.0,0.07,23.8,16.3,6.9,0.0,null],[74900,57.6,11.0,56.0,0.0,23.8,16.4,6.9,0.0,null],[74960,57.1,11.0,55.0,0.1,23.8,16.4,6.9,0.0,null],[75020,57.1,11.0,56.0,0.0,23.9,16.4,6.9,0.0,null],[75080,56.5,11.0,56.0,0.05,23.9,16.4,6.9,0.0,null],[75140,55.4,11.0,56.0,0.11,23.9,16.4,6.9,0.0,null],[75200,57.1,11.0,56.0,0.12,23.9,16.4,6.9,0.0,null],[75260,56.5,11.0,56.0,0.0,23.9,16.4,6.9,0.0,null],[75320,58.7,11.0,56.0,0.35,23.9,16.5,6.9,0.0,null],[75380,56.5,11.0,56.0,0.07,23.9,16.5,6.9,0.0,null],[75440,56.0,11.0,56.0,0.04,24.0,16.5,6.9,0.0,null],[75500,56.5,11.0,56.0,0.0,24.0,16.5,6.9,0.0,null],[75560,56.5,11.0,56.0,0.11,24.1,16.5,6.9,0.0,null],[75620,59.3,11.0,55.0,0.08,24.1,16.5,6.9,0.0,null],[75680,65.3,11.0,56.0,0.06,24.1,16.5,6.9,0.0,null],[75740,67.0,11.0,56.0,0.3,24.2,16.6,6.9,0.0,null],[75800,70.8,11.0,56.0,0.18,24.2,16.6,6.9,0.0,null],[75860,73.0,11.0,56.0,0.15,24.2,16.6,6.9,0.0,null],[75920,74.7,11.0,56.0,0.04,24.2,16.6,6.9,0.0,null],[75980,71.9,11.0,56.0,0.14,24.2,16.6,6.9,0.0,null],[76040,69.7,11.0,56.0,0.1,24.2,16.6,6.9,0.0,null],[76100,66.4,11.0,56.0,0.21,24.1,16.6,6.9,0.0,null],[76160,63.1,11.0,56.0,0.09,24.1,16.7,6.9,0.0,null],[76220,64.2,11.0,56.0,0.07,24.1,16.7,6.9,0.0,null],[76280,59.8,11.0,56.0,0.13,24.2,16.7,6.9,0.0,null],[76340,58.7,11.0,55.0,0.04,24.2,16.7,6.9,0.0,null],[76400,59.3,11.0,55.0,0.06,24.2,16.7,6.9,0.0,null],[76460,56.5,11.0,55.0,0.06,24.2,16.7,6.9,0.0,null],[76520,56.5,11.0,55.0,0.09,24.2,16.7,6.9,0.0,null],[76580,57.1,11.0,55.0,0.23,24.2,16.8,6.9,0.0,null],[76640,57.1,11.0,55.0,0.22,24.2,16.8,6.9,0.0,null],[76700,57.6,11.0,55.0,0.04,24.3,16.8,6.9,0.0,null],[76760,57.1,11.0,55.0,0.09,24.3,16.8,6.9,0.0,null],[76820,55.4,11.0,55.0,0.08,24.3,16.8,6.9,0.0,null],[76880,57.1,11.0,55.0,0.08,24.3,16.8,6.9,0.0,null],[76940,56.5,11.0,55.0,0.05,24.4,16.8,6.9,0.0,null],[77000,57.6,11.0,55.0,0.05,24.5,16.8,6.9,0.0,null],[77060,57.6,11.0,55.0,0.05,24.5,16.9,6.9,0.0,null],[77120,59.8,11.0,55.0,0.06,24.5,16.9,6.9,0.0,null],[77180,58.7,11.0,55.0,0.26,24.5,16.9,6.9,0.0,null],[77240,64.2,11.0,55.0,0.1,24.5,16.9,6.9,0.0,null],[77300,61.5,11.0,55.0,0.09,24.5,16.9,6.9,0.0,null],[77360,73.0,11.0,55.0,0.04,24.5,16.9,6.9,0.0,null],[77420,68.6,11.0,55.0,0.0,24.6,16.9,6.9,0.0,null],[77480,60.4,11.0,55.0,0.01,24.6,17.0,6.9,0.0,null],[77540,66.4,11.0,55.0,0.04,24.5,17.0,6.9,0.0,null],[77600,65.3,11.0,55.0,0.07,24.5,17.0,6.9,0.0,null],[77660,67.5,11.0,55.0,0.12,24.5,17.0,6.9,0.0,null],[77720,62.0,11.0,55.0,0.04,24.6,17.0,6.9,0.0,null],[77780,57.6,11.0,55.0,0.03,24.6,17.0,6.9,0.0,null],[77840,58.7,11.0,55.0,0.05,24.7,17.0,6.9,0.0,null],[77900,57.6,11.0,55.0,0.11,24.7,17.1,6.9,0.0,null],[77960,57.1,11.0,55.0,0.04,24.7,17.1,6.9,0.0,null],[78020,57.6,11.0,55.0,0.1,24.7,17.1,6.9,0.0,null],[78080,58.2,12.0,55.0,0.07,24.7,17.1,6.9,0.0,null],[78140,57.6,12.0,55.0,0.09,24.7,17.1,6.9,0.0,null],[78200,57.1,12.0,55.0,0.07,24.7,17.1,6.9,0.0,null],[78260,57.6,12.0,55.0,0.19,24.8,17.2,6.9,0.0,null],[78320,57.1,12.0,55.0,0.2,24.8,17.2,6.9,0.0,null],[78380,56.5,12.0,55.0,0.0,24.8,17.2,6.9,0.0,null],[78440,56.5,12.0,55.0,0.01,24.8,17.2,6.9,0.0,null],[78500,58.2,12.0,55.0,0.09,24.8,17.2,6.9,0.0,null],[78560,58.7,12.0,55.0,0.01,24.8,17.2,6.9,0.0,null],[78620,59.8,12.0,55.0,0.14,24.8,17.2,6.9,0.0,null],[78680,65.3,12.0,55.0,0.0,24.9,17.2,6.9,0.0,null],[78740,63.7,12.0,55.0,0.06,24.9,17.3,6.9,0.0,null],[78800,64.2,12.0,55.0,0.12,24.9,17.3,6.9,0.0,null],[78860,63.7,12.0,55.0,0.06,24.9,17.3,6.9,0.0,null],[78920,60.4,12.0,55.0,0.0,24.9,17.3,6.9,0.0,null],[78980,61.5,12.0,55.0,0.0,24.8,17.3,6.9,0.0,null],[79040,61.5,12.0,55.0,0.01,24.8,17.3,6.9,0.0,null],[79100,62.6,12.0,55.0,0.19,24.8,17.3,6.9,0.0,null],[79160,61.5,12.0,55.0,0.1,24.8,17.4,6.9,0.0,null],[79220,57.6,12.0,55.0,0.12,25.0,17.4,6.9,0.0,null],[79280,58.2,12.0,55.0,0.01,25.0,17.4,6.9,0.0,null],[79340,58.7,12.0,55.0,0.08,25.0,17.4,6.9,0.0,null],[79400,58.7,12.0,55.0,0.0,25.0,17.4,6.9,0.0,null],[79460,57.1,12.0,55.0,0.02,25.0,17.4,6.9,0.0,null],[79520,57.1,12.0,55.0,0.0,25.1,17.4,6.9,0.0,null],[79580,58.2,12.0,55.0,0.22,25.1,17.5,6.9,0.0,null],[79640,58.7,12.0,55.0,0.0,25.1,17.5,6.9,0.0,null],[79700,57.6,12.0,55.0,0.34,25.1,17.5,6.9,0.0,null],[79760,57.6,12.0,55.0,0.02,25.1,17.5,6.9,0.0,null],[79820,57.1,12.0,55.0,0.18,25.1,17.5,6.9,0.0,null],[79880,59.3,12.0,55.0,0.0,25.1,17.5,6.9,0.0,null],[79940,63.1,12.0,55.0,0.04,25.2,17.5,6.9,0.0,null],[80000,71.9,12.0,55.0,0.01,25.2,17.6,6.9,0.0,null],[80060,75.7,12.0,55.0,0.08,25.2,17.6,6.9,0.0,null],[80120,73.6,12.0,55.0,0.07,25.2,17.6,6.9,0.0,null],[80180,74.7,12.0,55.0,0.09,25.2,17.6,6.9,0.0,null],[80240,74.1,12.0,55.0,0.0,25.2,17.6,6.9,0.0,null],[80300,73.6,12.0,55.0,0.06,25.2,17.6,6.9,0.0,null],[80360,71.9,12.0,55.0,0.03,25.3,17.6,6.9,0.0,null],[80420,72.5,12.0,55.0,0.06,25.1,17.7,6.9,0.0,null],[80480,67.0,12.0,55.0,0.02,25.2,17.7,6.9,0.0,null],[80540,63.7,12.0,55.0,0.34,25.2,17.7,6.9,0.0,null],[80600,62.6,12.0,55.0,0.05,25.3,17.7,6.9,0.0,null],[80660,60.4,12.0,55.0,0.0,25.3,17.7,6.9,0.0,null],[80720,59.3,12.0,55.0,0.0,25.3,17.7,6.9,0.0,null],[80780,58.7,12.0,55.0,0.05,25.4,17.7,6.9,0.0,null],[80840,58.7,12.0,55.0,0.03,25.4,17.8,6.9,0.0,null],[80900,58.7,12.0,55.0,0.1,25.4,17.8,6.9,0.0,null],[80960,57.1,12.0,55.0,0.0,25.4,17.8,6.9,0.0,null],[81020,57.6,12.0,55.0,0.16,25.4,17.8,6.9,0.0,null],[81080,58.7,12.0,55.0,0.02,25.4,17.8,6.9,0.0,null],[81140,59.3,12.0,55.0,0.1,25.4,17.8,6.9,0.0,null],[81200,57.6,12.0,55.0,0.0,25.5,17.8,6.9,0.0,null],[81260,57.6,12.0,55.0,0.04,25.5,17.9,6.9,0.0,null],[81320,58.2,12.0,55.0,0.04,25.5,17.9,6.9,0.0,null],[81380,69.7,12.0,55.0,0.05,25.5,17.9,6.9,0.0,null],[81440,71.9,12.0,55.0,0.0,25.5,17.9,6.9,0.0,null],[81500,75.2,12.0,55.0,0.26,25.5,17.9,6.9,0.0,null],[81560,69.2,12.0,55.0,0.03,25.5,17.9,6.9,0.0,null],[81620,64.2,12.0,55.0,0.01,25.6,17.9,6.9,0.0,null],[81680,65.3,12.0,55.0,0.1,25.6,18.0,6.9,0.0,null],[81740,63.7,12.0,55.0,0.07,25.6,18.0,6.9,0.0,null],[81800,59.3,12.0,55.0,0.0,25.6,18.0,6.9,0.0,null],[81860,56.5,12.0,55.0,0.0,25.5,18.0,6.9,0.0,null],[81920,56.0,12.0,55.0,0.0,25.5,18.0,6.9,0.0,null],[81980,56.5,12.0,55.0,0.0,25.5,18.0,6.9,0.0,null],[82040,57.6,12.0,55.0,0.13,25.5,18.0,6.9,0.0,null],[82100,55.4,12.0,55.0,0.03,25.5,18.1,6.9,0.0,null],[82160,56.0,12.0,55.0,0.03,25.6,18.1,6.9,0.0,null],[82220,57.1,12.0,55.0,0.02,25.6,18.1,6.9,0.0,null],[82280,59.3,12.0,55.0,0.0,25.6,18.1,6.9,0.0,null],[82340,56.5,12.0,55.0,0.04,25.6,18.1,6.9,0.0,null],[82400,57.1,12.0,55.0,0.03,25.6,18.1,6.9,0.0,null],[82460,56.5,12.0,55.0,0.0,25.6,18.1,6.9,0.0,null],[82520,56.5,12.0,55.0,0.1,25.8,18.2,6.9,0.0,null],[82580,57.1,12.0,55.0,0.0,25.8,18.2,6.9,0.0,null],[82640,57.6,12.0,55.0,0.08,25.8,18.2,6.9,0.0,null],[82700,58.2,12.0,55.0,0.0,25.8,18.2,6.9,0.0,null],[82760,56.5,12.0,55.0,0.06,25.8,18.2,6.9,0.0,null],[82820,70.8,12.0,55.0,0.0,25.8,18.2,6.9,0.0,null],[82880,67.5,12.0,55.0,0.07,25.9,18.2,6.9,0.0,null],[82940,66.4,12.0,55.0,0.0,25.9,18.3,6.9,0.0,null],[83000,67.5,12.0,55.0,0.09,25.9,18.3,6.9,0.0,null],[83060,71.9,12.0,55.0,0.17,25.9,18.3,6.9,0.0,null],[83120,71.9,12.0,55.0,0.04,25.9,18.3,6.9,0.0,null],[83180,68.1,12.0,55.0,0.11,25.9,18.3,6.9,0.0,null],[83240,60.9,12.0,55.0,0.22,25.9,18.3,6.9,0.0,null],[83300,60.4,12.0,55.0,0.05,25.8,18.3,6.9,0.0,null],[83360,57.1,12.0,55.0,0.0,25.8,18.4,6.9,0.0,null],[83420,58.2,12.0,55.0,0.13,26.0,18.4,6.9,0.0,null],[83480,57.1,12.0,55.0,0.09,26.0,18.4,6.9,0.0,null],[83540,54.9,12.0,55.0,0.27,26.0,18.4,6.9,0.0,null],[83600,56.0,12.0,55.0,0.29,26.0,18.4,6.9,0.0,null],[83660,57.1,12.0,55.0,0.1,26.0,18.4,6.9,0.0,null],[83720,56.5,12.0,55.0,0.08,26.1,18.4,6.9,0.0,null],[83780,57.1,12.0,55.0,0.13,26.1,18.5,6.9,0.0,null],[83840,56.0,12.0,55.0,0.08,26.1,18.5,6.9,0.0,null],[83900,57.1,12.0,55.0,0.07,26.1,18.5,6.9,0.0,null],[83960,57.1,12.0,55.0,0.07,26.1,18.5,6.9,0.0,null],[84020,59.3,12.0,55.0,0.12,26.1,18.5,6.9,0.0,null],[84080,57.1,12.0,55.0,0.17,26.1,18.5,6.9,0.0,null],[84140,56.5,12.0,55.0,0.02,26.2,18.5,6.9,0.0,null],[84200,57.1,12.0,55.0,0.22,26.2,18.6,6.9,0.0,null],[84260,58.2,12.0,55.0,0.04,26.2,18.6,6.9,0.0,null],[84320,62.0,12.0,55.0,0.17,26.2,18.6,6.9,0.0,null],[84380,62.0,12.0,55.0,0.0,26.2,18.6,6.9,0.0,null],[84440,67.5,12.0,55.0,0.09,26.2,18.6,6.9,0.0,null],[84500,71.4,12.0,55.0,0.28,26.2,18.6,6.9,0.0,null],[84560,70.3,12.0,55.0,0.09,26.3,18.6,6.9,0.0,null],[84620,65.9,12.0,55.0,0.0,26.3,18.7,6.9,0.0,null],[84680,63.7,12.0,55.0,0.04,26.3,18.7,6.9,0.0,null],[84740,59.3,12.0,55.0,0.02,26.3,18.7,6.9,0.0,null],[84800,57.1,12.0,55.0,0.02,26.3,18.7,6.9,0.0,null],[84860,57.6,12.0,55.0,0.09,26.3,18.7,6.9,0.0,null],[84920,58.7,12.0,55.0,0.04,26.3,18.7,6.9,0.0,null],[84980,57.1,12.0,55.0,0.12,26.4,18.7,6.9,0.0,null],[85040,56.0,12.0,55.0,0.1,26.4,18.8,6.9,0.0,null],[85100,57.1,12.0,55.0,0.24,26.4,18.8,6.9,0.0,null],[85160,56.5,12.0,55.0,0.13,26.4,18.8,6.9,0.0,null],[85220,56.5,12.0,55.0,0.01,26.4,18.8,6.9,0.0,null],[85280,57.1,12.0,55.0,0.31,26.4,18.8,6.9,0.0,null],[85340,57.6,12.0,55.0,0.0,26.4,18.8,6.9,0.0,null],[85400,56.5,12.0,55.0,0.23,26.5,18.8,6.9,0.0,null],[85460,57.1,12.0,55.0,0.1,26.5,18.9,6.9,0.0,null],[85520,57.1,12.0,55.0,0.47,26.5,18.9,6.9,0.0,null],[85580,57.1,12.0,55.0,0.0,26.5,18.9,6.9,0.0,null],[85640,57.6,12.0,55.0,0.18,26.5,18.9,6.9,0.0,null],[85700,57.1,12.0,55.0,0.19,26.5,18.9,6.9,0.0,null],[85760,59.8,12.0,55.0,0.19,26.5,18.9,6.9,0.0,null],[85820,68.1,12.0,55.0,0.0,26.6,18.9,6.9,0.0,null],[85880,71.9,12.0,55.0,0.22,26.6,19.0,6.9,0.0,null],[85940,68.6,12.0,55.0,0.06,26.6,19.0,6.9,0.0,null],[86000,74.7,12.0,55.0,0.15,26.6,19.0,6.9,0.0,null],[86060,73.6,12.0,55.0,0.01,26.6,19.0,6.9,0.0,null],[86120,70.8,12.0,55.0,0.09,26.6,19.0,6.9,0.0,null],[86180,75.2,12.0,55.0,0.12,26.5,19.0,6.9,0.0,null],[86240,70.8,12.0,55.0,0.1,26.5,19.0,6.9,0.0,null],[86300,63.7,12.0,55.0,0.07,26.5,19.1,6.9,0.0,null],[86360,60.9,12.0,55.0,0.08,26.6,19.1,6.9,0.0,null],[86420,57.1,12.0,55.0,0.12,26.6,19.1,6.9,0.0,null],[86480,56.5,12.0,55.0,0.1,26.6,19.1,6.9,0.0,null],[86540,57.1,12.0,55.0,0.01,26.6,19.1,6.9,0.0,null],[86600,58.7,12.0,55.0,0.18,26.6,19.1,6.9,0.0,null],[86660,58.2,12.0,55.0,0.06,26.6,19.1,6.9,0.0,null],[86720,59.3,12.0,55.0,0.06,26.6,19.2,6.9,0.0,null],[86780,59.3,12.0,55.0,0.11,26.7,19.2,6.9,0.0,null],[86840,58.2,12.0,55.0,0.07,26.7,19.2,6.9,0.0,null],[86900,58.7,12.0,55.0,0.13,26.7,19.2,6.9,0.0,null],[86960,58.2,12.0,55.0,0.11,26.8,19.2,6.9,0.0,null],[87020,58.7,12.0,55.0,0.21,26.8,19.2,6.9,0.0,null],[87080,57.1,12.0,55.0,0.12,26.9,19.2,6.9,0.0,null],[87140,58.7,12.0,55.0,0.09,26.9,19.3,6.9,0.0,null],[87200,59.8,12.0,55.0,0.07,26.9,19.3,6.9,0.0,null],[87260,57.6,12.0,55.0,0.31,26.9,19.3,6.9,0.0,null],[87320,63.1,12.0,55.0,0.08,26.9,19.3,6.9,0.0,null],[87380,66.4,12.0,55.0,0.03,26.9,19.3,6.9,0.0,null],[87440,68.1,12.0,55.0,0.15,26.9,19.3,6.9,0.0,null],[87500,64.8,13.0,55.0,0.1,27.0,19.3,6.9,0.0,null],[87560,66.4,13.0,55.0,0.0,27.0,19.4,6.9,0.0,null],[87620,62.6,12.0,55.0,0.95,26.9,19.4,6.9,1.0,null],[87680,62.6,12.0,35.0,0.03,26.9,19.4,6.9,1.0,null],[87740,62.6,13.0,35.0,0.23,26.9,19.5,6.9,1.0,null],[87800,62.0,13.0,35.0,0.13,27.0,19.5,6.9,1.0,null],[87860,57.1,13.0,35.0,0.1,27.0,19.5,6.9,1.0,null],[87920,57.6,13.0,35.0,0.23,27.1,19.6,6.9,1.0,null],[87980,60.9,13.0,35.0,0.18,27.1,19.6,6.9,1.0,null],[88040,59.3,13.0,35.0,0.0,27.1,19.7,6.9,1.0,null],[88100,60.4,13.0,35.0,0.04,27.2,19.7,6.9,1.0,null],[88160,59.3,13.0,35.0,0.35,27.4,19.8,6.9,1.0,null],[88220,58.7,13.0,35.0,0.06,27.4,19.8,6.9,1.0,null],[88280,59.8,13.0,35.0,0.12,27.4,19.8,6.9,1.0,null],[88340,59.3,13.0,35.0,0.1,27.4,19.8,6.9,1.0,null],[88400,60.4,13.0,35.0,0.46,27.4,19.8,6.9,1.0,null],[88460,59.3,13.0,35.0,0.37,27.5,19.9,6.9,1.0,null],[88520,62.0,13.0,35.0,0.1,27.5,19.9,6.9,1.0,null],[88580,60.9,13.0,35.0,0.12,27.6,20.0,6.9,1.0,null],[88640,67.5,13.0,35.0,0.19,27.6,20.0,6.9,1.0,null],[88700,68.6,13.0,35.0,0.06,27.6,20.0,6.9,1.0,null],[88760,73.0,13.0,35.0,0.05,27.7,20.1,6.9,0.0,29.3],[88820,73.0,13.0,35.0,0.0,27.7,20.1,6.9,0.0,30.2],[88880,67.0,13.0,35.0,0.02,27.8,20.2,6.9,0.0,28.3],[88940,63.1,13.0,35.0,0.19,27.8,20.2,6.9,0.0,28.3],[89000,63.7,13.0,35.0,0.14,27.8,20.2,6.9,0.0,28.4],[89060,64.2,13.0,35.0,0.01,27.8,20.3,6.9,1.0,26.8],[89120,63.7,13.0,95.0,0.0,27.8,20.3,6.9,0.0,27.5],[89180,64.2,13.0,53.0,0.0,27.9,20.4,6.9,0.0,28.8],[89240,59.3,13.0,53.0,0.0,28.0,20.5,6.9,0.0,28.7],[89300,58.2,13.0,53.0,0.01,28.1,20.6,6.9,0.0,27.2],[89360,57.1,13.0,53.0,0.1,28.2,20.7,6.9,0.0,26.9],[89420,57.1,13.0,53.0,0.05,28.3,20.8,6.9,0.0,27.1],[89480,56.5,13.0,53.0,0.0,28.4,20.9,6.9,0.0,27.0],[89540,57.1,13.0,53.0,0.13,28.5,21.0,6.9,0.0,26.8],[89600,57.1,13.0,53.0,0.02,28.5,21.1,6.9,0.0,26.8],[89660,56.0,13.0,53.0,0.0,28.6,21.1,6.9,0.0,26.7],[89720,60.9,13.0,53.0,0.12,28.7,21.2,6.9,0.0,26.9],[89780,58.7,13.0,53.0,0.05,28.6,21.1,6.9,0.0,26.8],[89840,58.7,13.0,53.0,0.17,28.7,21.2,6.9,0.0,26.2],[89900,56.0,13.0,53.0,0.16,28.8,21.3,6.9,0.0,26.1],[89960,57.6,13.0,53.0,0.04,28.9,21.4,6.9,0.0,25.5],[90020,57.6,13.0,53.0,0.11,29.0,21.5,6.9,0.0,25.2],[90080,57.1,13.0,53.0,0.06,29.1,21.6,6.9,0.0,25.0],[90140,68.1,13.0,53.0,0.0,29.2,21.7,6.9,0.0,25.7],[90200,68.1,14.0,53.0,0.0,29.3,21.8,6.9,0.0,27.3],[90260,71.9,14.0,53.0,0.0,29.3,21.8,6.9,0.0,28.1],[90320,73.0,14.0,53.0,0.02,29.4,21.9,6.9,0.0,29.0],[90380,65.9,14.0,53.0,0.06,29.5,22.0,6.9,0.0,29.2],[90440,69.2,14.0,53.0,0.05,29.6,22.1,6.9,0.0,29.5],[90500,68.1,14.0,53.0,0.02,29.6,22.2,6.9,0.0,32.1],[90560,68.6,14.0,53.0,0.0,29.7,22.3,6.9,0.0,31.7],[90620,67.0,14.0,53.0,0.04,29.8,22.4,6.9,0.0,31.1],[90680,63.1,14.0,53.0,0.01,29.8,22.5,6.9,0.0,30.4],[90740,58.7,14.0,53.0,0.0,30.0,22.5,6.9,0.0,29.4],[90800,58.2,14.0,53.0,0.11,30.1,22.6,6.9,0.0,28.9],[90860,58.7,14.0,53.0,0.03,30.2,22.7,6.9,0.0,28.7],[90920,59.3,14.0,53.0,0.0,30.3,22.8,6.9,0.0,27.8],[90980,57.6,14.0,53.0,0.06,30.4,22.9,6.9,0.0,28.1],[91040,57.1,14.0,53.0,0.02,30.5,23.0,6.9,0.0,26.4],[91100,57.6,14.0,53.0,0.03,30.6,23.1,6.9,0.0,25.9],[91160,57.1,14.0,53.0,0.0,30.7,23.2,6.9,0.0,25.6],[91220,57.1,14.0,53.0,0.01,30.8,23.3,6.9,0.0,25.0],[91280,56.5,14.0,53.0,0.02,30.9,23.4,6.9,0.0,25.0],[91340,58.2,14.0,53.0,0.12,31.0,23.5,6.9,0.0,24.8],[91400,57.6,14.0,53.0,0.08,31.1,23.6,6.9,0.0,24.6],[91460,67.0,14.0,53.0,0.05,31.2,23.7,6.9,0.0,24.6],[91520,70.3,14.0,53.0,0.09,31.3,23.8,6.9,0.0,26.1],[91580,74.7,14.0,53.0,0.0,31.3,23.9,6.9,0.0,27.8],[91640,69.2,14.0,53.0,0.1,31.4,23.9,6.9,0.0,29.5],[91700,67.5,15.0,53.0,0.11,31.5,24.0,6.9,0.0,30.5],[91760,65.3,15.0,53.0,0.0,31.6,24.1,6.9,0.0,30.4],[91820,67.5,15.0,53.0,0.04,31.7,24.2,6.9,0.0,30.6],[91880,68.1,15.0,53.0,0.05,31.8,24.3,6.9,0.0,31.1],[91940,73.0,15.0,53.0,0.04,31.8,24.4,6.9,0.0,30.1],[92000,65.9,15.0,53.0,0.03,31.8,24.5,6.9,0.0,30.5],[92060,60.4,15.0,53.0,0.03,31.9,24.6,6.9,0.0,29.6],[92120,56.0,15.0,53.0,0.01,32.0,24.6,6.9,0.0,28.6],[92180,58.7,15.0,53.0,0.03,32.1,24.7,6.9,0.0,28.0],[92240,56.5,15.0,53.0,0.0,32.2,24.8,6.9,0.0,27.3],[92300,58.2,15.0,53.0,0.01,32.3,24.9,6.9,0.0,27.4],[92360,56.5,15.0,53.0,0.02,32.4,25.0,6.9,0.0,26.8],[92420,57.1,15.0,53.0,0.0,32.5,25.1,6.9,0.0,27.3],[92480,57.6,15.0,53.0,0.02,32.5,25.2,6.9,0.0,27.2],[92540,57.1,15.0,53.0,0.05,32.6,25.3,6.9,0.0,26.8],[92600,57.6,15.0,53.0,0.0,32.7,25.3,6.9,0.0,26.7],[92660,58.2,15.0,53.0,0.0,32.8,25.4,6.9,0.0,26.5],[92720,56.5,15.0,53.0,0.02,33.0,25.5,6.9,0.0,26.0],[92780,58.7,15.0,53.0,0.0,33.1,25.6,6.9,0.0,25.5],[92840,57.1,15.0,53.0,0.01,33.2,25.7,6.9,0.0,25.6],[92900,63.1,15.0,53.0,0.0,33.3,25.8,6.9,0.0,25.5],[92960,68.1,15.0,53.0,0.0,33.4,25.9,6.9,0.0,26.4],[93020,68.6,15.0,53.0,0.0,33.5,26.0,6.9,0.0,27.5],[93080,65.3,15.0,53.0,0.0,33.6,26.1,6.9,0.0,29.3],[93140,71.9,15.0,53.0,0.13,33.6,26.1,6.9,0.0,28.4],[93200,69.2,16.0,53.0,0.06,33.7,26.2,6.9,0.0,30.8],[93260,66.4,16.0,53.0,0.0,33.8,26.3,6.9,0.0,29.9]],"diskTotal":234.1,"hasBreakdown":true,"hasAir":true,"airRef":"\u81fa\u4e2d \u7ad9 1.4km","maint":[]};   // {t0, pts:[[分位移,溫度,磁碟%,齡期,負載,已用GB,資料GB,系統GB],...],
+                      //  diskTotal, hasBreakdown}
+  var T = D.diskTotal;
+
+  // 磁碟:依該站回報的欄位選擇呈現方式(堆疊 → 單線GB → 百分比)
+  var diskSpec;
+  if(T && D.hasBreakdown){
+    diskSpec = {name:"磁碟使用", unit:" GB", axis:"容量 (GB) / 共 "+T+" GB",
+      color:"#58a6ff", total:T,
+      warn:+(T*0.8).toFixed(1), danger:+(T*0.9).toFixed(1),
+      stack:[                                    // 由下而上
+        {k:7, name:"作業系統",    color:"#484f58"},
+        {k:-1, name:"其他",       color:"#d29922"},   // -1 = 推算(已用−系統−資料)
+        {k:6, name:"NavPod 資料", color:"#58a6ff"}
+      ],
+      desc:"df 取得總容量與已用量;du 計算 NavPod 資料夾大小;系統目錄(/usr /var /boot /etc /opt)每 24 小時以 du 重算一次並快取。「其他」為已用扣除系統與資料後的餘額。"};
+  } else if(T){
+    diskSpec = {i:5, name:"磁碟使用", unit:" GB", axis:"已用 (GB) / 共 "+T+" GB",
+      color:"#58a6ff", warn:+(T*0.8).toFixed(1), danger:+(T*0.9).toFixed(1),
+      desc:"由 df -BM 讀取根分割區(整張 SD 卡)的已用與總容量,換算為 GB。該站尚未回報資料/系統明細,故顯示單一總量。"};
+  } else {
+    diskSpec = {i:2, name:"磁碟使用", unit:"%", axis:"使用率 (%)",
+      color:"#58a6ff", warn:80, danger:90,
+      desc:"由 df --output=pcent 讀取根分割區使用率;該指令只回傳整數,故曲線呈階梯狀。該站尚未回報總容量,故以百分比顯示。"};
+  }
+
+  var SPECS = [
+    {i:1, name:"CPU溫度", unit:"°C", axis:"溫度 (°C)", color:"#f0883e",
+     warn:70, danger:80,
+     overlay: D.hasAir ? {i:9, name:"環境氣溫", color:"#58a6ff"} : null,
+     desc:"由 vcgencmd measure_temp 向 SoC 內建溫度感測器查詢晶片核心溫度,每 5 分鐘取樣一次。"
+        + (D.hasAir ? ("藍色虛線為環境氣溫" + (D.airRef ? "(來源:" + D.airRef + ")" : "")
+                       + ",兩線的間距即為機殼溫升。") : "")},
+    diskSpec,
+    {i:3, name:"資料檔齡期", unit:" 分", axis:"距最新檔 (分鐘)", color:"#3fb950",
+     warn:65, danger:120,
+     desc:"掃描資料夾中所有 .ubx,取最後修改時間最新的一個,與採樣時刻相減得出分鐘數。"},
+    {i:4, name:"系統負載", unit:"", axis:"1分鐘平均負載", color:"#bc8cff",
+     warn:4, danger:8,
+     desc:"讀取 /proc/loadavg 第一欄,即 Linux 核心統計的 1 分鐘平均「執行中＋等待中」工作數。"}
+  ];
+
+  var t0 = new Date(D.t0).getTime();
+  var box = document.getElementById("charts");
+  var info = document.getElementById("rangeinfo");
+  var CONN = "#a371f7";              // 遠端連線標示色
+  var diskZoom = true;               // 磁碟圖:true=貼合變化 / false=0起算
+  var curFrom = 0, curTo = 0;        // 記住目前區間,供切換時重繪
+
+  // 由 connect_sessions 推算連線區間 [{s:起,e:迄}] (毫秒)
+  function sessions(from, to){
+    var out=null, res=[];
+    for(var i=0;i<D.pts.length;i++){
+      var p=D.pts[i], t=t0+p[0]*60000, on=(p[8]!==null && p[8]>0);
+      if(on && !out) out={s:t, e:t};
+      else if(on) out.e=t;
+      else if(out){ res.push(out); out=null; }
+    }
+    if(out) res.push(out);
+    return res.filter(function(r){ return r.e>=from && r.s<=to; });
+  }
+
+  // 維護事件標記:琥珀色虛直線 + 頂端扳手符號(滑鼠移上顯示內容)
+  var MAINT = "#e3b341";
+  function maintMarks(from, to, X, PT, H, PB){
+    return (D.maint||[]).filter(function(m){ return m.t>=from && m.t<=to; })
+      .map(function(m){
+        var x=X2(m.t,from,to,X).toFixed(1);
+        return '<g><title>'+m.label+'</title>'
+             + '<line x1="'+x+'" y1="'+PT+'" x2="'+x+'" y2="'+(H-PB)+'" stroke="'+MAINT
+             + '" stroke-width="1.4" stroke-dasharray="3,3"/>'
+             + '<text x="'+x+'" y="'+(PT+9)+'" text-anchor="middle" font-size="10" fill="'
+             + MAINT+'">▼</text></g>';
+      }).join("");
+  }
+
+  // 連線期間的背景遮罩(畫在座標區內),並疊上維護事件標記
+  function shade(from, to, X, PT, H, PB){
+    return maintMarks(from, to, X, PT, H, PB) + sessions(from, to).map(function(r){
+      var x1=X2(Math.max(r.s,from),from,to,X), x2=X2(Math.min(r.e,to),from,to,X);
+      var w=Math.max(1.5, x2-x1);
+      return '<rect x="'+x1.toFixed(1)+'" y="'+PT+'" width="'+w.toFixed(1)
+           + '" height="'+(H-PT-PB)+'" fill="'+CONN+'" opacity="0.14"/>'
+           + '<line x1="'+x1.toFixed(1)+'" y1="'+PT+'" x2="'+x1.toFixed(1)
+           + '" y2="'+(H-PB)+'" stroke="'+CONN+'" stroke-width="1" opacity="0.6"/>';
+    }).join("");
+  }
+  function X2(ms, from, to, X){ return X((ms-t0)/60000); }
+
+  function fmt(ms){
+    var d=new Date(ms), p=function(n){return (n<10?"0":"")+n;};
+    var y=(d.getFullYear()!==new Date().getFullYear())?d.getFullYear()+"/":"";   // 非今年才標年份
+    return y+p(d.getMonth()+1)+"/"+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes());
+  }
+  function localInput(ms){
+    return new Date(ms - new Date(ms).getTimezoneOffset()*60000).toISOString().slice(0,16);
+  }
+  function bucket(rows, idx, n){
+    if(rows.length<=n) return rows.map(function(r){return [r[0], r[idx]];});
+    var out=[], size=rows.length/n;
+    for(var b=0;b<n;b++){
+      var s=Math.floor(b*size), e=Math.floor((b+1)*size), sum=0, c=0, tsum=0;
+      for(var k=s;k<e;k++){ tsum+=rows[k][0];
+        if(rows[k][idx]!==null && rows[k][idx]!==undefined){ sum+=rows[k][idx]; c++; } }
+      out.push([tsum/Math.max(1,e-s), c? sum/c : null]);
+    }
+    return out;
+  }
+
+  // 堆疊面積圖(磁碟組成):縱軸固定 0 ~ 總容量
+  function drawStack(sp, rows, from, to){
+    var used = bucket(rows, 5, 400), data = bucket(rows, 6, 400), os = bucket(rows, 7, 400);
+    var pts = [];
+    for(var i=0;i<used.length;i++){
+      if(used[i][1]===null || data[i][1]===null || os[i][1]===null) continue;
+      var o=os[i][1], dt=data[i][1], ot=Math.max(0, used[i][1]-o-dt);
+      pts.push({t:used[i][0], v:[o, ot, dt], used:used[i][1]});
+    }
+    if(pts.length<2)
+      return '<div class="ch"><div class="cht">'+sp.name+'</div>'
+           + '<div class="chna">此區間資料不足</div>'
+           + '<div class="chd">'+sp.desc+'</div></div>';
+
+    var W=470,H=170,PL=52,PR=10,PT=16,PB=32, T=sp.total;
+    // 縱軸:貼合變化 → 依已用量範圍縮放;0起算 → 0~總容量
+    var lo, hi;
+    if(diskZoom){
+      var us=pts.map(function(p){return p.used;});
+      lo=Math.min.apply(null,us); hi=Math.max.apply(null,us);
+      if(hi-lo<0.2){ hi+=0.2; lo-=0.2; }
+      var pd=(hi-lo)*0.15; lo-=pd; hi+=pd;
+      if(lo<0) lo=0;
+    } else { lo=0; hi=T; }
+    var X=function(m){return PL+(W-PL-PR)*((t0+m*60000)-from)/Math.max(1,to-from);};
+    var Y=function(v){return PT+(H-PT-PB)*(1-(v-lo)/(hi-lo));};
+    CLIP++;
+
+    // 由下而上累加,每層畫成封閉多邊形(上緣正向 + 下緣反向)
+    var layers="", cum=pts.map(function(){return 0;});
+    for(var L=0;L<3;L++){
+      var upper=[], lower=[];
+      for(var i=0;i<pts.length;i++){
+        lower.push(X(pts[i].t).toFixed(1)+","+Y(cum[i]).toFixed(1));
+        cum[i]+=pts[i].v[L];
+        upper.push(X(pts[i].t).toFixed(1)+","+Y(cum[i]).toFixed(1));
+      }
+      layers += '<path d="M'+upper.join(" L")+' L'+lower.reverse().join(" L")+' Z" fill="'
+             + sp.stack[L].color+'" opacity="0.85"/>';
+    }
+    // 警戒/危險線(僅在縱軸範圍內才畫)
+    [[sp.warn,"#d29922","警戒"],[sp.danger,"#f85149","危險"]].forEach(function(z){
+      if(z[0]<lo || z[0]>hi) return;
+      var y=Y(z[0]).toFixed(1);
+      layers += '<line x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'" stroke="'+z[1]
+             +'" stroke-width="1.2" stroke-dasharray="5,4" opacity="0.9"/>'
+             +  '<text x="'+(W-PR-3)+'" y="'+(y-4)+'" text-anchor="end" class="zl" fill="'
+             + z[1]+'">'+z[2]+' '+z[0]+' GB</text>';
+    });
+
+    var last=pts[pts.length-1];
+    var legend = sp.stack.map(function(s,i){
+      return '<span class="lgi"><i style="background:'+s.color+'"></i>'+s.name
+           + ' <b>'+(+last.v[i].toFixed(1))+'</b></span>';
+    }).join("");
+    var zbtn = '<span class="zbtn">'
+      + '<button class="zb'+(diskZoom?' on':'')+'" onclick="__disk(1)">貼合變化</button>'
+      + '<button class="zb'+(diskZoom?'':' on')+'" onclick="__disk(0)">0 起算</button></span>';
+    var zoomNote = diskZoom
+      ? ' <span class="zo">縱軸已貼合已用量範圍(非 0 起算),便於觀察變化;切換「0 起算」可看完整容量比例。</span>' : '';
+
+    return '<div class="ch"><div class="cht">'+sp.name
+      + ' <b style="color:'+sp.color+'">'+(+last.used.toFixed(1))+' / '+T+' GB</b>'
+      + '<span class="rng">剩餘 '+(+(T-last.used).toFixed(1))+' GB</span></div>'
+      + '<div class="lgs">'+legend+zbtn+'</div>'
+      + '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'
+      + '<defs><clipPath id="cp'+CLIP+'"><rect x="'+PL+'" y="'+PT+'" width="'
+      + (W-PL-PR)+'" height="'+(H-PT-PB)+'"/></clipPath></defs>'
+      + '<g clip-path="url(#cp'+CLIP+')">'+shade(from,to,X,PT,H,PB)+layers+'</g>'
+      + '<line x1="'+PL+'" y1="'+PT+'" x2="'+PL+'" y2="'+(H-PB)+'" stroke="#30363d"/>'
+      + '<line x1="'+PL+'" y1="'+(H-PB)+'" x2="'+(W-PR)+'" y2="'+(H-PB)+'" stroke="#30363d"/>'
+      + '<text x="6" y="'+(PT+4)+'" class="ax">'+(+hi.toFixed(1))+'</text>'
+      + '<text x="6" y="'+(PT+(H-PT-PB)/2+4)+'" class="ax">'+(+((hi+lo)/2).toFixed(1))+'</text>'
+      + '<text x="6" y="'+(H-PB+4)+'" class="ax">'+(+lo.toFixed(1))+'</text>'
+      + '<text x="'+PL+'" y="'+(H-18)+'" class="ax">'+fmt(from)+'</text>'
+      + '<text x="'+(W-PR)+'" y="'+(H-18)+'" class="ax" text-anchor="end">'+fmt(to)+'</text>'
+      + '<text x="'+((PL+W-PR)/2)+'" y="'+(H-4)+'" text-anchor="middle" class="axt">時間 (月/日 時:分)</text>'
+      + '<text x="12" y="'+(PT+(H-PT-PB)/2)+'" class="axt" text-anchor="middle" '
+      + 'transform="rotate(-90 12 '+(PT+(H-PT-PB)/2)+')">'+sp.axis+'</text>'
+      + '</svg><div class="chd">'+sp.desc+zoomNote+'</div></div>';
+  }
+
+  // 遠端連線紀錄表:起訖、時長、期間最高溫與溫升
+  function renderSessions(from, to){
+    var el = document.getElementById("connect");
+    if(!el) return;
+    var hasCol = D.pts.some(function(p){ return p[8]!==null; });
+    if(!hasCol){
+      el.innerHTML = '<div class="chna">此站尚未回報連線狀態'
+        + '(採集腳本需新增 connect_sessions 欄)</div>';
+      return;
+    }
+    var ss = sessions(from, to);
+    if(!ss.length){
+      el.innerHTML = '<div class="chna">此區間內無遠端連線紀錄</div>';
+      return;
+    }
+    var rows = ss.slice(-20).reverse().map(function(r){
+      var span = D.pts.filter(function(p){
+        var t=t0+p[0]*60000; return t>=r.s && t<=r.e && p[1]!==null; });
+      var before = D.pts.filter(function(p){
+        var t=t0+p[0]*60000; return t<r.s && t>=r.s-1800000 && p[1]!==null; });
+      var tmax = span.length? Math.max.apply(null, span.map(function(p){return p[1];})) : null;
+      var tbase = before.length? before[before.length-1][1] : null;
+      var rise = (tmax!==null && tbase!==null)? (tmax-tbase) : null;
+      var mins = Math.round((r.e-r.s)/60000)+5;   // 採樣間隔補足
+      var dur = mins>=60? Math.floor(mins/60)+" 小時 "+(mins%60)+" 分" : mins+" 分";
+      return '<tr><td>'+fmt(r.s)+'</td><td>'+fmt(r.e)+'</td><td>'+dur+'</td>'
+        + '<td>'+(tmax!==null? tmax.toFixed(1)+"°C" : "—")+'</td>'
+        + '<td'+(rise!==null && rise>=3? ' style="color:#f0883e"':'')+'>'
+        + (rise!==null? (rise>=0?"+":"")+rise.toFixed(1)+"°C" : "—")+'</td></tr>';
+    }).join("");
+    el.innerHTML = '<table><tr><th>連線開始</th><th>連線結束</th><th>時長</th>'
+      + '<th>期間最高溫</th><th>較連線前溫升</th></tr>'+rows+'</table>'
+      + '<div class="chd">依 connect_sessions 欄推算(5 分鐘解析度,時長已補一個採樣間隔)。'
+      + '「溫升」為期間最高溫減去連線前最後一筆溫度。趨勢圖上的紫色區塊即為這些連線期間。</div>';
+  }
+
+  window.__disk = function(z){
+    diskZoom = !!z;
+    draw(curFrom, curTo);
+  };
+
+  var CLIP = 0;
+
+  function draw(from, to){
+    curFrom=from; curTo=to;
+    var rows = D.pts.filter(function(p){ var t=t0+p[0]*60000; return t>=from && t<=to; });
+    info.textContent = fmt(from)+" ~ "+fmt(to)+"  ·  "+rows.length+" 筆";
+    renderSessions(from, to);
+    box.innerHTML = SPECS.map(function(sp){
+      if(sp.stack) return drawStack(sp, rows, from, to);
+      var data = bucket(rows, sp.i, 400).filter(function(d){return d[1]!==null;});
+      if(data.length<2)
+        return '<div class="ch"><div class="cht">'+sp.name+'</div>'
+             + '<div class="chna">此區間資料不足</div>'
+             + '<div class="chd">'+sp.desc+'</div></div>';
+      var W=470,H=170,PL=52,PR=10,PT=16,PB=32;
+      var vs=data.map(function(d){return d[1];});
+      // 疊圖序列(如 CPU 溫度圖上的環境氣溫)
+      var ov = null;
+      if(sp.overlay){
+        ov = bucket(rows, sp.overlay.i, 400).filter(function(d){return d[1]!==null;});
+        if(ov.length<2){ ov=null; }
+        else { vs = vs.concat(ov.map(function(d){return d[1];})); }
+      }
+      var lo=Math.min.apply(null,vs), hi=Math.max.apply(null,vs);
+      if(hi-lo<1e-9){hi+=1;lo-=1;}
+      var pad=(hi-lo)*0.10; lo-=pad; hi+=pad;
+      var X=function(m){return PL+(W-PL-PR)*((t0+m*60000)-from)/Math.max(1,to-from);};
+      var Y=function(v){return PT+(H-PT-PB)*(1-(v-lo)/(hi-lo));};
+      var line=data.map(function(d){return X(d[0]).toFixed(1)+","+Y(d[1]).toFixed(1);}).join(" ");
+      var f0=data[0], fl=data[data.length-1];
+      var area="M"+X(f0[0]).toFixed(1)+","+(H-PB)+" L"+line+" L"+X(fl[0]).toFixed(1)+","+(H-PB)+" Z";
+
+      // 警戒/危險線(僅在目前縱軸範圍內才畫,否則於說明列標註)
+      var lines="", notes=[];
+      [[sp.warn,"#d29922","警戒"],[sp.danger,"#f85149","危險"]].forEach(function(z){
+        if(z[0]===null||z[0]===undefined) return;
+        if(z[0]>=lo && z[0]<=hi){
+          var y=Y(z[0]).toFixed(1);
+          lines += '<line x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'" stroke="'+z[1]
+                +'" stroke-width="1.2" stroke-dasharray="5,4" opacity="0.85"/>'
+                +  '<text x="'+(W-PR-3)+'" y="'+(y-4)+'" text-anchor="end" class="zl" fill="'
+                + z[1]+'">'+z[2]+' '+z[0]+sp.unit+'</text>';
+        } else { notes.push(z[2]+' '+z[0]+sp.unit); }
+      });
+      var noteTxt = notes.length? '<span class="zo">('+notes.join(' · ')+' 未在圖面範圍內)</span>' : '';
+
+      var grid=[0.5].map(function(f){var y=(PT+(H-PT-PB)*f).toFixed(1);
+        return '<line x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'" stroke="#21262d"/>';}).join("");
+      var mid=(hi+lo)/2;
+      CLIP++;
+      var ovLine="", ovLegend="";
+      if(ov){
+        var op=ov.map(function(d){return X(d[0]).toFixed(1)+","+Y(d[1]).toFixed(1);}).join(" ");
+        ovLine = '<polyline points="'+op+'" fill="none" stroke="'+sp.overlay.color
+               + '" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.9"/>';
+        var ol=ov[ov.length-1][1];
+        ovLegend = '<div class="lgs">'
+          + '<span class="lgi"><i style="background:'+sp.color+'"></i>'+sp.name
+          + ' <b>'+(+fl[1].toFixed(1))+'°C</b></span>'
+          + '<span class="lgi"><i style="background:'+sp.overlay.color+'"></i>'+sp.overlay.name
+          + ' <b>'+(+ol.toFixed(1))+'°C</b></span>'
+          + '<span class="lgi">溫升 <b>+'+(fl[1]-ol).toFixed(1)+'°C</b></span></div>';
+      }
+
+      return '<div class="ch"><div class="cht">'+sp.name
+        + ' <b style="color:'+sp.color+'">'+(+fl[1].toFixed(2))+sp.unit+'</b>'
+        + '<span class="rng">區間 '+(+Math.min.apply(null,vs).toFixed(1))+' ~ '
+        + (+Math.max.apply(null,vs).toFixed(1))+sp.unit+'</span></div>'
+        + ovLegend
+        + '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'
+        + '<defs><clipPath id="cp'+CLIP+'"><rect x="'+PL+'" y="'+PT+'" width="'
+        + (W-PL-PR)+'" height="'+(H-PT-PB)+'"/></clipPath></defs>'
+        + '<g clip-path="url(#cp'+CLIP+')">'+shade(from,to,X,PT,H,PB)+'</g>'+grid
+        + '<line x1="'+PL+'" y1="'+PT+'" x2="'+PL+'" y2="'+(H-PB)+'" stroke="#30363d"/>'
+        + '<line x1="'+PL+'" y1="'+(H-PB)+'" x2="'+(W-PR)+'" y2="'+(H-PB)+'" stroke="#30363d"/>'
+        + '<path d="'+area+'" fill="'+sp.color+'" opacity="0.12"/>'
+        + '<polyline points="'+line+'" fill="none" stroke="'+sp.color
+        + '" stroke-width="1.8" stroke-linejoin="round"/>'+ovLine+lines
+        + '<circle cx="'+X(fl[0]).toFixed(1)+'" cy="'+Y(fl[1]).toFixed(1)+'" r="3" fill="'+sp.color+'"/>'
+        + '<text x="6" y="'+(PT+4)+'" class="ax">'+(+hi.toFixed(1))+'</text>'
+        + '<text x="6" y="'+(PT+(H-PT-PB)/2+4)+'" class="ax">'+(+mid.toFixed(1))+'</text>'
+        + '<text x="6" y="'+(H-PB+4)+'" class="ax">'+(+lo.toFixed(1))+'</text>'
+        + '<text x="'+PL+'" y="'+(H-18)+'" class="ax">'+fmt(from)+'</text>'
+        + '<text x="'+(W-PR)+'" y="'+(H-18)+'" class="ax" text-anchor="end">'+fmt(to)+'</text>'
+        + '<text x="'+((PL+W-PR)/2)+'" y="'+(H-4)+'" text-anchor="middle" class="axt">時間 (月/日 時:分)</text>'
+        + '<text x="12" y="'+(PT+(H-PT-PB)/2)+'" class="axt" text-anchor="middle" '
+        + 'transform="rotate(-90 12 '+(PT+(H-PT-PB)/2)+')">'+sp.axis+'</text>'
+        + '</svg><div class="chd">'+sp.desc+' '+noteTxt+'</div></div>';
+    }).join("");
+  }
+
+  var END = t0 + (D.pts.length? D.pts[D.pts.length-1][0] : 0)*60000;
+  function preset(h, el){
+    document.querySelectorAll(".pbtn").forEach(function(b){b.classList.remove("on");});
+    if(el) el.classList.add("on");
+    var to=END, from=h? to-h*3600000 : t0;
+    document.getElementById("f").value=localInput(from);
+    document.getElementById("t").value=localInput(to);
+    draw(from,to);
+  }
+  window.__preset=preset;
+  window.__apply=function(){
+    var f=document.getElementById("f").value, t=document.getElementById("t").value;
+    if(!f||!t) return;
+    var from=new Date(f).getTime(), to=new Date(t).getTime();
+    if(from>=to){ alert("起始時間必須早於結束時間"); return; }
+    document.querySelectorAll(".pbtn").forEach(function(b){b.classList.remove("on");});
+    draw(from,to);
+  };
+  preset(24, document.querySelector(".pbtn[data-h='24']"));
+})();
+</script>
+</body></html>
