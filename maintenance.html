@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>維護日誌 — NavPod 觀測網</title><style>
+:root { color-scheme: dark; }
+* { box-sizing: border-box; margin: 0; }
+body { font-family: "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
+       background: #0d1117; color: #e6edf3; }
+a { color: #58a6ff; text-decoration: none; }
+.banner { padding: 18px 26px; display: flex; flex-wrap: wrap;
+          align-items: baseline; gap: 16px; }
+.banner h1 { font-size: 22px; font-weight: 700; }
+.sub { padding: 8px 26px; color: #8b949e; font-size: 12.5px;
+       font-family: Consolas, monospace; }
+.wrap { padding: 6px 26px 30px; max-width: 1180px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 12.5px; color: #8b949e; border: 1px solid;
+        border-radius: 999px; padding: 3px 11px; white-space: nowrap; }
+.chip b { font-family: Consolas, monospace; }
+.plist { list-style: none; }
+.plist li { padding: 5px 0; font-size: 14.5px; line-height: 1.55;
+            border-top: 1px dashed #21262d; }
+.tag { color: #0d1117; font-size: 11.5px; font-weight: 700; border-radius: 4px;
+       padding: 2px 7px; margin-right: 9px; }
+
+.banner { background: #e3b34122; border-bottom: 4px solid #e3b341; }
+</style></head><body>
+<div class="banner">
+  <h1><a href="index.html" style="color:#8b949e">← NavPod 觀測網</a> / 維護日誌</h1>
+  <div style="font-size:15px;font-weight:600;color:#8b949e">共 7 筆 · 彙整站 4 筆</div>
+</div>
+<div class="sub">頁面產生 2026-10-18 01:02:36&ensp;|&ensp;資料來源:彙整站上的 navpod_maintenance.csv&ensp;|&ensp;「全部」類紀錄在任何篩選下都會顯示</div>
+<div class="wrap"><style>
+.mt { border-collapse:collapse;width:100%;font-size:13.5px }
+.mt th,.mt td { border-bottom:1px solid #21262d;padding:7px 12px 7px 0;text-align:left;vertical-align:top }
+.mt th { color:#8b949e;font-weight:600 }
+.mt .md { font-family:Consolas,monospace;white-space:nowrap;color:#e3b341 }
+.mt .mdt { color:#8b949e }
+.mst { background:#1f6feb22;color:#58a6ff;border-radius:4px;padding:1px 7px;white-space:nowrap }
+.mcat { border:1px solid #30363d;border-radius:999px;padding:1px 8px;white-space:nowrap;color:#c9d1d9 }
+
+.flt { display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 14px }
+.pbtn { background:#161b22;color:#e6edf3;border:1px solid #30363d;border-radius:999px;
+        padding:4px 12px;font-size:12.5px;cursor:pointer;font-family:inherit }
+.pbtn:hover { border-color:#e3b341 }
+.pbtn.on { background:#e3b34122;border-color:#e3b341;color:#e3b341;font-weight:700 }
+.cnt { color:#6e7681;font-family:Consolas,monospace }
+.chna { color:#6e7681;font-size:13px;padding:20px 4px }
+</style>
+<div class="flt"><button class="pbtn on" data-f="">全部</button><button class="pbtn" data-f="彙整站">彙整站 <span class="cnt">4</span></button><button class="pbtn" data-f="navpod10_FC">navpod10_FC <span class="cnt">1</span></button><button class="pbtn" data-f="navpod11_ASSC">navpod11_ASSC <span class="cnt">0</span></button><button class="pbtn" data-f="navpod12_NCUS4west">navpod12_NCUS4west <span class="cnt">0</span></button><button class="pbtn" data-f="navpod1_CYweather">navpod1_CYweather <span class="cnt">0</span></button><button class="pbtn" data-f="navpod2_NCYU">navpod2_NCYU <span class="cnt">0</span></button><button class="pbtn" data-f="navpod3_MTES">navpod3_MTES <span class="cnt">0</span></button><button class="pbtn" data-f="navpod4_HAES">navpod4_HAES <span class="cnt">0</span></button><button class="pbtn" data-f="navpod5_LTES">navpod5_LTES <span class="cnt">0</span></button><button class="pbtn" data-f="navpod6.1_TCGSHS">navpod6.1_TCGSHS <span class="cnt">0</span></button><button class="pbtn" data-f="navpod6_TCGSHS">navpod6_TCGSHS <span class="cnt">0</span></button><button class="pbtn" data-f="navpod7.1_TCFSH">navpod7.1_TCFSH <span class="cnt">0</span></button><button class="pbtn" data-f="navpod7_TCFSH">navpod7_TCFSH <span class="cnt">0</span></button><button class="pbtn" data-f="navpod8_YHES">navpod8_YHES <span class="cnt">0</span></button><button class="pbtn" data-f="navpod9_NCUS4">navpod9_NCUS4 <span class="cnt">0</span></button><button class="pbtn" data-f="navpod11_NCUS4west">navpod11_NCUS4west <span class="cnt">1</span></button><button class="pbtn" data-f="navpod12_ASSC">navpod12_ASSC <span class="cnt">1</span></button></div>
+<table class="mt"><tr><th>日期</th><th>對象</th><th>類別</th><th>摘要</th><th>說明</th><th>執行人</th></tr><tr data-st="navpod12_ASSC"><td class="md">2026-10-16 18:55</td><td><span class="mst">navpod12_ASSC</span></td><td><span class="mcat">其他</span></td><td>新增站點</td><td class="mdt">新增中研院南院站點</td><td>樂樂</td></tr><tr data-st="navpod11_NCUS4west"><td class="md">2026-10-16 18:00</td><td><span class="mst">navpod11_NCUS4west</span></td><td><span class="mcat">其他</span></td><td>新增站點</td><td class="mdt">新增中大科四西邊站</td><td>玟君</td></tr><tr data-st="彙整站"><td class="md">2026-10-16 17:40</td><td><span class="mst">彙整站</span></td><td><span class="mcat">故障排除</span></td><td>syncthing同步資料夾卡住</td><td class="mdt">彙整站syncthing的資料庫毀損無法同步因此造成同步卡住,使得syncthing畫面卡住,無法對畫面做任何操作,透過判斷毀損資料夾和重建索引修正錯誤</td><td>樂樂</td></tr><tr data-st="彙整站"><td class="md">2026-10-16 12:40</td><td><span class="mst">彙整站</span></td><td><span class="mcat">軟體更新</span></td><td>更新dashboard v14新增rsync/syncthing連接狀況功能</td><td class="mdt">新增navpod10時注意到彙整站的syncthing已停30多天,因此新增此功能同時檢測彙整站及navpodmom的syncthing溝通狀況</td><td>樂樂</td></tr><tr data-st="navpod10_FC"><td class="md">2026-10-16 12:20</td><td><span class="mst">navpod10_FC</span></td><td><span class="mcat">其他</span></td><td>新增站點</td><td class="mdt">新增富貴角站點</td><td>樂樂</td></tr><tr data-st="彙整站"><td class="md">2026-10-16 11:16</td><td><span class="mst">彙整站</span></td><td><span class="mcat">設定調整</span></td><td>建立設定每日備份</td><td class="mdt">navpod-config-backup 私有 repo,每日 04:00 自動推送</td><td>樂樂</td></tr><tr data-st="彙整站"><td class="md">2026-10-15 13:30</td><td><span class="mst">彙整站</span></td><td><span class="mcat">軟體更新</span></td><td>更新dashboard v13新增更新網站日誌</td><td class="mdt">為navpod各站及彙整站新增維護日誌,以便未來查詢站點有沒有異常</td><td>樂樂</td></tr></table>
+</div>
+<script>
+document.querySelectorAll('.flt .pbtn').forEach(function(b){
+  b.onclick=function(){
+    document.querySelectorAll('.flt .pbtn').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    var f=b.getAttribute('data-f');
+    document.querySelectorAll('.mt tr[data-st]').forEach(function(r){
+      var st=r.getAttribute('data-st');
+      r.style.display=(!f || st===f || st==='全部')?'':'none';
+    });
+  };
+});
+</script>
+</body></html>
