@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>navpod8_YHES — NavPod 觀測網</title><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><style>
+:root { color-scheme: dark; }
+* { box-sizing: border-box; margin: 0; }
+body { font-family: "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
+       background: #0d1117; color: #e6edf3; }
+a { color: #58a6ff; text-decoration: none; }
+.banner { padding: 18px 26px; display: flex; flex-wrap: wrap;
+          align-items: baseline; gap: 16px; }
+.banner h1 { font-size: 22px; font-weight: 700; }
+.sub { padding: 8px 26px; color: #8b949e; font-size: 12.5px;
+       font-family: Consolas, monospace; }
+.wrap { padding: 6px 26px 30px; max-width: 1180px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 12.5px; color: #8b949e; border: 1px solid;
+        border-radius: 999px; padding: 3px 11px; white-space: nowrap; }
+.chip b { font-family: Consolas, monospace; }
+.plist { list-style: none; }
+.plist li { padding: 5px 0; font-size: 14.5px; line-height: 1.55;
+            border-top: 1px dashed #21262d; }
+.tag { color: #0d1117; font-size: 11.5px; font-weight: 700; border-radius: 4px;
+       padding: 2px 7px; margin-right: 9px; }
+
+.banner { background: #f8514922; border-bottom: 4px solid #f85149; }
+</style></head><body>
+<div class="banner">
+  <h1><a href="../index.html" style="color:#8b949e">← NavPod 觀測網</a> / navpod8_YHES</h1>
+  <div style="font-size:26px;font-weight:800;color:#f85149">危險</div>
+</div>
+<div class="sub">資料時間 2026-07-07T12:16:23&ensp;|&ensp;頁面產生 2026-08-23 04:10:28&ensp;|&ensp;歷史保留 7 天</div>
+<div class="wrap"><style>
+.two { display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start }
+@media (max-width:820px) { .two { grid-template-columns:1fr } }
+.mainimg { width:100%;border-radius:12px;border:1px solid #30363d;display:block }
+#map { width:100%;height:320px;border-radius:12px;border:1px solid #30363d;background:#161b22 }
+.leaflet-container { background:#161b22 }
+.mctl { display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap }
+.mctl .lg { margin-left:auto;color:#8b949e;font-size:12px;display:flex;align-items:center }
+.mctl .lg i { width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px }
+.ph { color:#8b949e;border:1px dashed #30363d;border-radius:12px;padding:0 20px;height:320px;
+      display:flex;flex-direction:column;justify-content:center;text-align:center;font-size:15px }
+.ph span { font-size:12.5px;color:#6e7681 }
+.coord { color:#8b949e;font-size:12px;font-family:Consolas,monospace;margin-top:6px }
+h2 { font-size:16px;color:#8b949e;margin:24px 0 10px }
+table { border-collapse:collapse;font-family:Consolas,monospace;font-size:13.5px }
+th,td { border-bottom:1px solid #21262d;padding:6px 14px 6px 0;text-align:left }
+th { color:#8b949e;font-weight:600 }
+.help { background:#161b22;border:1px solid #30363d;border-radius:10px;padding:12px 16px }
+.help h3 { font-size:13px;color:#8b949e;margin-bottom:8px;font-weight:600 }
+.help dl { margin:0;font-size:13px;line-height:1.6 }
+.help dt { color:#e6edf3;font-weight:700;margin-top:8px;font-family:Consolas,monospace }
+.help dt:first-child { margin-top:0 }
+.help dd { margin:0;color:#8b949e }
+.help code { background:#0d1117;border:1px solid #30363d;border-radius:4px;
+             padding:1px 5px;font-family:Consolas,monospace;font-size:12px }
+.help .bits { margin-top:6px;font-size:12px;border-collapse:collapse }
+.help .bits th { color:#6e7681;font-weight:600;padding:2px 10px 2px 0 }
+.help .bits td { padding:2px 10px 2px 0;border-bottom:1px solid #21262d;
+                 font-family:Consolas,monospace }
+.help .bits td:last-child { font-family:inherit }
+.ctrl { display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px }
+.pbtn { background:#161b22;color:#e6edf3;border:1px solid #30363d;border-radius:999px;
+        padding:5px 14px;font-size:13px;cursor:pointer;font-family:inherit }
+.pbtn:hover { border-color:#58a6ff }
+.pbtn.on { background:#1f6feb33;border-color:#58a6ff;color:#58a6ff;font-weight:700 }
+.ctrl input { background:#0d1117;color:#e6edf3;border:1px solid #30363d;border-radius:6px;
+              padding:4px 8px;font-size:13px;font-family:Consolas,monospace }
+.ctrl .sep { color:#6e7681;margin:0 2px }
+#rangeinfo { color:#8b949e;font-size:12.5px;font-family:Consolas,monospace;margin-left:auto }
+#charts { display:grid;grid-template-columns:1fr 1fr;gap:12px }
+@media (max-width:820px) { #charts { grid-template-columns:1fr } }
+.ch { background:#161b22;border:1px solid #30363d;border-radius:10px;padding:10px 12px }
+.cht { font-size:13px;color:#8b949e;margin-bottom:4px }
+.cht b { font-family:Consolas,monospace;font-size:15px }
+.cht .rng { float:right;font-size:11.5px;color:#6e7681;font-family:Consolas,monospace }
+.lgs { display:flex;flex-wrap:wrap;gap:12px;margin-bottom:4px }
+.lgi { font-size:11.5px;color:#8b949e;display:flex;align-items:center }
+.lgi i { width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:5px }
+.lgi b { font-family:Consolas,monospace;color:#e6edf3;margin-left:4px }
+.zbtn { margin-left:auto;display:flex;gap:4px }
+.zb { background:#0d1117;color:#8b949e;border:1px solid #30363d;border-radius:5px;
+      padding:1px 8px;font-size:11px;cursor:pointer;font-family:inherit }
+.zb:hover { border-color:#58a6ff }
+.zb.on { background:#1f6feb33;border-color:#58a6ff;color:#58a6ff;font-weight:700 }
+#connect table { margin-bottom:6px }
+#connect .chd { border-top:1px dashed #21262d;padding-top:6px;font-size:12px;
+                color:#8b949e;line-height:1.5 }
+.ch svg { width:100%;height:170px;display:block }
+.ax { fill:#6e7681;font-size:9px;font-family:Consolas,monospace }
+.axt { fill:#6e7681;font-size:9.5px }
+.zl { font-size:9px;font-family:Consolas,monospace }
+.chd { font-size:12px;color:#8b949e;line-height:1.5;margin-top:6px;
+       border-top:1px dashed #21262d;padding-top:6px }
+.chd .zo { color:#6e7681 }
+.chna { color:#6e7681;font-size:13px;padding:20px 4px }
+.gal { display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px }
+.gal img { width:100%;border-radius:8px;border:1px solid #30363d;display:block }
+.probs { background:#161b22;border:1px solid #30363d;border-radius:10px;padding:12px 18px }
+</style>
+<div class="two">
+  <div><div class="ph">尚無主照片<br><span>把照片命名為 main.jpg 放進該站照片資料夾</span></div></div>
+  <div><div class="ph">尚未設定座標<br><span>在 navpod_coords.csv 填入 navpod8_YHES 的緯經度</span></div></div>
+</div>
+<h2>目前狀態</h2><div class="chips"><span class="chip" style="border-color:#f85149;font-size:14px;padding:6px 14px">資料回傳 <b style="color:#f85149">67194 分前</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">CPU溫度 <b style="color:#3fb950">55.4°C</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">供電 <b style="color:#3fb950">0x0</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">磁碟 <b style="color:#3fb950">4%</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">記憶體 <b style="color:#3fb950">17%</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">負載 <b style="color:#3fb950">0.48</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">Logger <b style="color:#3fb950">active</b></span><span class="chip" style="border-color:#3fb950;font-size:14px;padding:6px 14px">F9P <b style="color:#3fb950">在線</b></span><span class="chip" style="border-color:#f85149;font-size:14px;padding:6px 14px">資料檔 <b style="color:#f85149">2570 分前</b></span><span class="chip" style="border-color:#f85149;font-size:14px;padding:6px 14px">檔案大小 <b style="color:#f85149">0MB</b></span><span class="chip" style="border-color:#d29922;font-size:14px;padding:6px 14px">運行時間 <b style="color:#d29922">0.0h</b></span></div>
+<h2>問題說明</h2><div class="probs"><ul class="plist"><li><span class="tag" style="background:#f85149">危險</span><b>資料回傳</b>:狀態資料已 67194 分鐘沒更新:站點可能斷電/斷網,或兩條回傳通道都中斷</li><li><span class="tag" style="background:#f85149">危險</span><b>資料檔</b>:超過 2 小時沒有新資料檔——收資料很可能已停止</li><li><span class="tag" style="background:#f85149">危險</span><b>檔案大小</b>:最新檔接近空檔——可能沒收到衛星資料</li><li><span class="tag" style="background:#d29922">警告</span><b>運行時間</b>:開機未滿 1 小時 (可能剛斷電重開)</li></ul></div>
+<h2>趨勢</h2>
+<div class="ctrl">
+  <button class="pbtn" data-h="1" onclick="__preset(1,this)">1小時</button><button class="pbtn" data-h="6" onclick="__preset(6,this)">6小時</button><button class="pbtn" data-h="24" onclick="__preset(24,this)">24小時</button><button class="pbtn" data-h="72" onclick="__preset(72,this)">3天</button><button class="pbtn" data-h="0" onclick="__preset(0,this)">全部</button>
+  <span class="sep">|</span>
+  <input type="datetime-local" id="f"><span class="sep">→</span>
+  <input type="datetime-local" id="t">
+  <button class="pbtn" onclick="__apply()">套用</button>
+  <span id="rangeinfo"></span>
+</div>
+<div id="charts"></div>
+<h2>遠端連線紀錄</h2>
+<div id="connect"></div>
+<h2>最近一小時紀錄</h2>
+<div class="two">
+  <div><div class="chna">尚無紀錄</div></div>
+  
+<div class="help"><h3>欄位說明</h3><dl>
+<dt>時間</dt><dd>採樣時刻(每 5 分鐘一筆,顯示最近 12 筆)</dd>
+<dt>溫度</dt><dd>以 <code>vcgencmd measure_temp</code> 取得,由 SoC 內建的溫度感測器直接量測
+<b>晶片核心(die)溫度</b>——不是盒內氣溫,通常比環境溫度高出不少。此值也是 Pi 自我保護的依據:
+Pi 4/5 約在 80–85°C 開始自動降頻。&lt;70°C 正常,70–80 留意散熱</dd>
+<dt>磁碟</dt><dd>以 <code>df</code> 讀取根分割區(整張 SD 卡)的已用/總容量。
+資料每日累積,約 30 天後被清檔排程抵銷而趨於平衡;若只升不降代表清檔失效</dd>
+<dt>Logger</dt><dd>資料記錄服務狀態。<b style="color:#3fb950">active</b> = 正常錄製中;
+其他值代表 GNSS 資料收集已中斷</dd>
+<dt>資料檔</dt><dd>距最新完成 .ubx 的分鐘數。每小時換檔,故正常在 0–60 間循環;
+若持續攀升不歸零,代表已停止收資料</dd>
+<dt>供電</dt><dd>以 <code>vcgencmd get_throttled</code> 取得的十六進位旗標,
+每個位元代表一種狀況,可同時成立(數值為相加):
+<table class="bits">
+<tr><th>值</th><th>位元</th><th>意義</th></tr>
+<tr><td>0x0</td><td>—</td><td style="color:#3fb950">一切正常,從未發生異常</td></tr>
+<tr><td>0x1</td><td>bit 0</td><td style="color:#f85149"><b>目前電壓不足</b>——供電不穩或電池將盡,最緊急</td></tr>
+<tr><td>0x2</td><td>bit 1</td><td style="color:#f85149">目前 ARM 頻率被限制</td></tr>
+<tr><td>0x4</td><td>bit 2</td><td style="color:#f85149">目前正在降頻(throttling)</td></tr>
+<tr><td>0x8</td><td>bit 3</td><td style="color:#f85149">目前已達軟性溫度上限(約 60°C 起降頻)</td></tr>
+<tr><td>0x10000</td><td>bit 16</td><td style="color:#d29922">曾發生電壓不足(現已恢復)</td></tr>
+<tr><td>0x20000</td><td>bit 17</td><td style="color:#d29922">曾發生 ARM 頻率限制</td></tr>
+<tr><td>0x40000</td><td>bit 18</td><td style="color:#d29922">曾發生降頻</td></tr>
+<tr><td>0x80000</td><td>bit 19</td><td style="color:#d29922">曾達軟性溫度上限</td></tr>
+</table>
+低位元(0x1–0x8)= <b>正在發生</b>,需立即處理;
+高位元(0x10000 以上)= <b>曾經發生但已恢復</b>,屬事後追查線索。
+例:<code>0x50000</code> = 曾電壓不足 + 曾降頻,目前已正常。</dd>
+</dl></div>
+</div>
+
+</div>
+<script>
+(function(){
+  var D = {"t0":"2026-08-23T04:10:28","pts":[],"diskTotal":null,"hasBreakdown":false};   // {t0, pts:[[分位移,溫度,磁碟%,齡期,負載,已用GB,資料GB,系統GB],...],
+                      //  diskTotal, hasBreakdown}
+  var T = D.diskTotal;
+
+  // 磁碟:依該站回報的欄位選擇呈現方式(堆疊 → 單線GB → 百分比)
+  var diskSpec;
+  if(T && D.hasBreakdown){
+    diskSpec = {name:"磁碟使用", unit:" GB", axis:"容量 (GB) / 共 "+T+" GB",
+      color:"#58a6ff", total:T,
+      warn:+(T*0.8).toFixed(1), danger:+(T*0.9).toFixed(1),
+      stack:[                                    // 由下而上
+        {k:7, name:"作業系統",    color:"#484f58"},
+        {k:-1, name:"其他",       color:"#d29922"},   // -1 = 推算(已用−系統−資料)
+        {k:6, name:"NavPod 資料", color:"#58a6ff"}
+      ],
+      desc:"df 取得總容量與已用量;du 計算 NavPod 資料夾大小;系統目錄(/usr /var /boot /etc /opt)每 24 小時以 du 重算一次並快取。「其他」為已用扣除系統與資料後的餘額。"};
+  } else if(T){
+    diskSpec = {i:5, name:"磁碟使用", unit:" GB", axis:"已用 (GB) / 共 "+T+" GB",
+      color:"#58a6ff", warn:+(T*0.8).toFixed(1), danger:+(T*0.9).toFixed(1),
+      desc:"由 df -BM 讀取根分割區(整張 SD 卡)的已用與總容量,換算為 GB。該站尚未回報資料/系統明細,故顯示單一總量。"};
+  } else {
+    diskSpec = {i:2, name:"磁碟使用", unit:"%", axis:"使用率 (%)",
+      color:"#58a6ff", warn:80, danger:90,
+      desc:"由 df --output=pcent 讀取根分割區使用率;該指令只回傳整數,故曲線呈階梯狀。該站尚未回報總容量,故以百分比顯示。"};
+  }
+
+  var SPECS = [
+    {i:1, name:"CPU溫度", unit:"°C", axis:"溫度 (°C)", color:"#f0883e",
+     warn:70, danger:80,
+     desc:"由 vcgencmd measure_temp 向 SoC 內建溫度感測器查詢晶片核心溫度,每 5 分鐘取樣一次。"},
+    diskSpec,
+    {i:3, name:"資料檔齡期", unit:" 分", axis:"距最新檔 (分鐘)", color:"#3fb950",
+     warn:65, danger:120,
+     desc:"掃描資料夾中所有 .ubx,取最後修改時間最新的一個,與採樣時刻相減得出分鐘數。"},
+    {i:4, name:"系統負載", unit:"", axis:"1分鐘平均負載", color:"#bc8cff",
+     warn:4, danger:8,
+     desc:"讀取 /proc/loadavg 第一欄,即 Linux 核心統計的 1 分鐘平均「執行中＋等待中」工作數。"}
+  ];
+
+  var t0 = new Date(D.t0).getTime();
+  var box = document.getElementById("charts");
+  var info = document.getElementById("rangeinfo");
+  var CONN = "#a371f7";              // 遠端連線標示色
+  var diskZoom = true;               // 磁碟圖:true=貼合變化 / false=0起算
+  var curFrom = 0, curTo = 0;        // 記住目前區間,供切換時重繪
+
+  // 由 connect_sessions 推算連線區間 [{s:起,e:迄}] (毫秒)
+  function sessions(from, to){
+    var out=null, res=[];
+    for(var i=0;i<D.pts.length;i++){
+      var p=D.pts[i], t=t0+p[0]*60000, on=(p[8]!==null && p[8]>0);
+      if(on && !out) out={s:t, e:t};
+      else if(on) out.e=t;
+      else if(out){ res.push(out); out=null; }
+    }
+    if(out) res.push(out);
+    return res.filter(function(r){ return r.e>=from && r.s<=to; });
+  }
+
+  // 連線期間的背景遮罩(畫在座標區內)
+  function shade(from, to, X, PT, H, PB){
+    return sessions(from, to).map(function(r){
+      var x1=X2(Math.max(r.s,from),from,to,X), x2=X2(Math.min(r.e,to),from,to,X);
+      var w=Math.max(1.5, x2-x1);
+      return '<rect x="'+x1.toFixed(1)+'" y="'+PT+'" width="'+w.toFixed(1)
+           + '" height="'+(H-PT-PB)+'" fill="'+CONN+'" opacity="0.14"/>'
+           + '<line x1="'+x1.toFixed(1)+'" y1="'+PT+'" x2="'+x1.toFixed(1)
+           + '" y2="'+(H-PB)+'" stroke="'+CONN+'" stroke-width="1" opacity="0.6"/>';
+    }).join("");
+  }
+  function X2(ms, from, to, X){ return X((ms-t0)/60000); }
+
+  function fmt(ms){
+    var d=new Date(ms), p=function(n){return (n<10?"0":"")+n;};
+    return p(d.getMonth()+1)+"/"+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes());
+  }
+  function localInput(ms){
+    return new Date(ms - new Date(ms).getTimezoneOffset()*60000).toISOString().slice(0,16);
+  }
+  function bucket(rows, idx, n){
+    if(rows.length<=n) return rows.map(function(r){return [r[0], r[idx]];});
+    var out=[], size=rows.length/n;
+    for(var b=0;b<n;b++){
+      var s=Math.floor(b*size), e=Math.floor((b+1)*size), sum=0, c=0, tsum=0;
+      for(var k=s;k<e;k++){ tsum+=rows[k][0];
+        if(rows[k][idx]!==null && rows[k][idx]!==undefined){ sum+=rows[k][idx]; c++; } }
+      out.push([tsum/Math.max(1,e-s), c? sum/c : null]);
+    }
+    return out;
+  }
+
+  // 堆疊面積圖(磁碟組成):縱軸固定 0 ~ 總容量
+  function drawStack(sp, rows, from, to){
+    var used = bucket(rows, 5, 400), data = bucket(rows, 6, 400), os = bucket(rows, 7, 400);
+    var pts = [];
+    for(var i=0;i<used.length;i++){
+      if(used[i][1]===null || data[i][1]===null || os[i][1]===null) continue;
+      var o=os[i][1], dt=data[i][1], ot=Math.max(0, used[i][1]-o-dt);
+      pts.push({t:used[i][0], v:[o, ot, dt], used:used[i][1]});
+    }
+    if(pts.length<2)
+      return '<div class="ch"><div class="cht">'+sp.name+'</div>'
+           + '<div class="chna">此區間資料不足</div>'
+           + '<div class="chd">'+sp.desc+'</div></div>';
+
+    var W=470,H=170,PL=52,PR=10,PT=16,PB=32, T=sp.total;
+    // 縱軸:貼合變化 → 依已用量範圍縮放;0起算 → 0~總容量
+    var lo, hi;
+    if(diskZoom){
+      var us=pts.map(function(p){return p.used;});
+      lo=Math.min.apply(null,us); hi=Math.max.apply(null,us);
+      if(hi-lo<0.2){ hi+=0.2; lo-=0.2; }
+      var pd=(hi-lo)*0.15; lo-=pd; hi+=pd;
+      if(lo<0) lo=0;
+    } else { lo=0; hi=T; }
+    var X=function(m){return PL+(W-PL-PR)*((t0+m*60000)-from)/Math.max(1,to-from);};
+    var Y=function(v){return PT+(H-PT-PB)*(1-(v-lo)/(hi-lo));};
+    CLIP++;
+
+    // 由下而上累加,每層畫成封閉多邊形(上緣正向 + 下緣反向)
+    var layers="", cum=pts.map(function(){return 0;});
+    for(var L=0;L<3;L++){
+      var upper=[], lower=[];
+      for(var i=0;i<pts.length;i++){
+        lower.push(X(pts[i].t).toFixed(1)+","+Y(cum[i]).toFixed(1));
+        cum[i]+=pts[i].v[L];
+        upper.push(X(pts[i].t).toFixed(1)+","+Y(cum[i]).toFixed(1));
+      }
+      layers += '<path d="M'+upper.join(" L")+' L'+lower.reverse().join(" L")+' Z" fill="'
+             + sp.stack[L].color+'" opacity="0.85"/>';
+    }
+    // 警戒/危險線(僅在縱軸範圍內才畫)
+    [[sp.warn,"#d29922","警戒"],[sp.danger,"#f85149","危險"]].forEach(function(z){
+      if(z[0]<lo || z[0]>hi) return;
+      var y=Y(z[0]).toFixed(1);
+      layers += '<line x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'" stroke="'+z[1]
+             +'" stroke-width="1.2" stroke-dasharray="5,4" opacity="0.9"/>'
+             +  '<text x="'+(W-PR-3)+'" y="'+(y-4)+'" text-anchor="end" class="zl" fill="'
+             + z[1]+'">'+z[2]+' '+z[0]+' GB</text>';
+    });
+
+    var last=pts[pts.length-1];
+    var legend = sp.stack.map(function(s,i){
+      return '<span class="lgi"><i style="background:'+s.color+'"></i>'+s.name
+           + ' <b>'+(+last.v[i].toFixed(1))+'</b></span>';
+    }).join("");
+    var zbtn = '<span class="zbtn">'
+      + '<button class="zb'+(diskZoom?' on':'')+'" onclick="__disk(1)">貼合變化</button>'
+      + '<button class="zb'+(diskZoom?'':' on')+'" onclick="__disk(0)">0 起算</button></span>';
+    var zoomNote = diskZoom
+      ? ' <span class="zo">縱軸已貼合已用量範圍(非 0 起算),便於觀察變化;切換「0 起算」可看完整容量比例。</span>' : '';
+
+    return '<div class="ch"><div class="cht">'+sp.name
+      + ' <b style="color:'+sp.color+'">'+(+last.used.toFixed(1))+' / '+T+' GB</b>'
+      + '<span class="rng">剩餘 '+(+(T-last.used).toFixed(1))+' GB</span></div>'
+      + '<div class="lgs">'+legend+zbtn+'</div>'
+      + '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'
+      + '<defs><clipPath id="cp'+CLIP+'"><rect x="'+PL+'" y="'+PT+'" width="'
+      + (W-PL-PR)+'" height="'+(H-PT-PB)+'"/></clipPath></defs>'
+      + '<g clip-path="url(#cp'+CLIP+')">'+shade(from,to,X,PT,H,PB)+layers+'</g>'
+      + '<line x1="'+PL+'" y1="'+PT+'" x2="'+PL+'" y2="'+(H-PB)+'" stroke="#30363d"/>'
+      + '<line x1="'+PL+'" y1="'+(H-PB)+'" x2="'+(W-PR)+'" y2="'+(H-PB)+'" stroke="#30363d"/>'
+      + '<text x="6" y="'+(PT+4)+'" class="ax">'+(+hi.toFixed(1))+'</text>'
+      + '<text x="6" y="'+(PT+(H-PT-PB)/2+4)+'" class="ax">'+(+((hi+lo)/2).toFixed(1))+'</text>'
+      + '<text x="6" y="'+(H-PB+4)+'" class="ax">'+(+lo.toFixed(1))+'</text>'
+      + '<text x="'+PL+'" y="'+(H-18)+'" class="ax">'+fmt(from)+'</text>'
+      + '<text x="'+(W-PR)+'" y="'+(H-18)+'" class="ax" text-anchor="end">'+fmt(to)+'</text>'
+      + '<text x="'+((PL+W-PR)/2)+'" y="'+(H-4)+'" text-anchor="middle" class="axt">時間 (月/日 時:分)</text>'
+      + '<text x="12" y="'+(PT+(H-PT-PB)/2)+'" class="axt" text-anchor="middle" '
+      + 'transform="rotate(-90 12 '+(PT+(H-PT-PB)/2)+')">'+sp.axis+'</text>'
+      + '</svg><div class="chd">'+sp.desc+zoomNote+'</div></div>';
+  }
+
+  // 遠端連線紀錄表:起訖、時長、期間最高溫與溫升
+  function renderSessions(from, to){
+    var el = document.getElementById("connect");
+    if(!el) return;
+    var hasCol = D.pts.some(function(p){ return p[8]!==null; });
+    if(!hasCol){
+      el.innerHTML = '<div class="chna">此站尚未回報連線狀態'
+        + '(採集腳本需新增 connect_sessions 欄)</div>';
+      return;
+    }
+    var ss = sessions(from, to);
+    if(!ss.length){
+      el.innerHTML = '<div class="chna">此區間內無遠端連線紀錄</div>';
+      return;
+    }
+    var rows = ss.slice(-20).reverse().map(function(r){
+      var span = D.pts.filter(function(p){
+        var t=t0+p[0]*60000; return t>=r.s && t<=r.e && p[1]!==null; });
+      var before = D.pts.filter(function(p){
+        var t=t0+p[0]*60000; return t<r.s && t>=r.s-1800000 && p[1]!==null; });
+      var tmax = span.length? Math.max.apply(null, span.map(function(p){return p[1];})) : null;
+      var tbase = before.length? before[before.length-1][1] : null;
+      var rise = (tmax!==null && tbase!==null)? (tmax-tbase) : null;
+      var mins = Math.round((r.e-r.s)/60000)+5;   // 採樣間隔補足
+      var dur = mins>=60? Math.floor(mins/60)+" 小時 "+(mins%60)+" 分" : mins+" 分";
+      return '<tr><td>'+fmt(r.s)+'</td><td>'+fmt(r.e)+'</td><td>'+dur+'</td>'
+        + '<td>'+(tmax!==null? tmax.toFixed(1)+"°C" : "—")+'</td>'
+        + '<td'+(rise!==null && rise>=3? ' style="color:#f0883e"':'')+'>'
+        + (rise!==null? (rise>=0?"+":"")+rise.toFixed(1)+"°C" : "—")+'</td></tr>';
+    }).join("");
+    el.innerHTML = '<table><tr><th>連線開始</th><th>連線結束</th><th>時長</th>'
+      + '<th>期間最高溫</th><th>較連線前溫升</th></tr>'+rows+'</table>'
+      + '<div class="chd">依 connect_sessions 欄推算(5 分鐘解析度,時長已補一個採樣間隔)。'
+      + '「溫升」為期間最高溫減去連線前最後一筆溫度。趨勢圖上的紫色區塊即為這些連線期間。</div>';
+  }
+
+  window.__disk = function(z){
+    diskZoom = !!z;
+    draw(curFrom, curTo);
+  };
+
+  var CLIP = 0;
+
+  function draw(from, to){
+    curFrom=from; curTo=to;
+    var rows = D.pts.filter(function(p){ var t=t0+p[0]*60000; return t>=from && t<=to; });
+    info.textContent = fmt(from)+" ~ "+fmt(to)+"  ·  "+rows.length+" 筆";
+    renderSessions(from, to);
+    box.innerHTML = SPECS.map(function(sp){
+      if(sp.stack) return drawStack(sp, rows, from, to);
+      var data = bucket(rows, sp.i, 400).filter(function(d){return d[1]!==null;});
+      if(data.length<2)
+        return '<div class="ch"><div class="cht">'+sp.name+'</div>'
+             + '<div class="chna">此區間資料不足</div>'
+             + '<div class="chd">'+sp.desc+'</div></div>';
+      var W=470,H=170,PL=52,PR=10,PT=16,PB=32;
+      var vs=data.map(function(d){return d[1];});
+      var lo=Math.min.apply(null,vs), hi=Math.max.apply(null,vs);
+      if(hi-lo<1e-9){hi+=1;lo-=1;}
+      var pad=(hi-lo)*0.10; lo-=pad; hi+=pad;
+      var X=function(m){return PL+(W-PL-PR)*((t0+m*60000)-from)/Math.max(1,to-from);};
+      var Y=function(v){return PT+(H-PT-PB)*(1-(v-lo)/(hi-lo));};
+      var line=data.map(function(d){return X(d[0]).toFixed(1)+","+Y(d[1]).toFixed(1);}).join(" ");
+      var f0=data[0], fl=data[data.length-1];
+      var area="M"+X(f0[0]).toFixed(1)+","+(H-PB)+" L"+line+" L"+X(fl[0]).toFixed(1)+","+(H-PB)+" Z";
+
+      // 警戒/危險線(僅在目前縱軸範圍內才畫,否則於說明列標註)
+      var lines="", notes=[];
+      [[sp.warn,"#d29922","警戒"],[sp.danger,"#f85149","危險"]].forEach(function(z){
+        if(z[0]===null||z[0]===undefined) return;
+        if(z[0]>=lo && z[0]<=hi){
+          var y=Y(z[0]).toFixed(1);
+          lines += '<line x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'" stroke="'+z[1]
+                +'" stroke-width="1.2" stroke-dasharray="5,4" opacity="0.85"/>'
+                +  '<text x="'+(W-PR-3)+'" y="'+(y-4)+'" text-anchor="end" class="zl" fill="'
+                + z[1]+'">'+z[2]+' '+z[0]+sp.unit+'</text>';
+        } else { notes.push(z[2]+' '+z[0]+sp.unit); }
+      });
+      var noteTxt = notes.length? '<span class="zo">('+notes.join(' · ')+' 未在圖面範圍內)</span>' : '';
+
+      var grid=[0.5].map(function(f){var y=(PT+(H-PT-PB)*f).toFixed(1);
+        return '<line x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'" stroke="#21262d"/>';}).join("");
+      var mid=(hi+lo)/2;
+      CLIP++;
+
+      return '<div class="ch"><div class="cht">'+sp.name
+        + ' <b style="color:'+sp.color+'">'+(+fl[1].toFixed(2))+sp.unit+'</b>'
+        + '<span class="rng">區間 '+(+Math.min.apply(null,vs).toFixed(1))+' ~ '
+        + (+Math.max.apply(null,vs).toFixed(1))+sp.unit+'</span></div>'
+        + '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'
+        + '<defs><clipPath id="cp'+CLIP+'"><rect x="'+PL+'" y="'+PT+'" width="'
+        + (W-PL-PR)+'" height="'+(H-PT-PB)+'"/></clipPath></defs>'
+        + '<g clip-path="url(#cp'+CLIP+')">'+shade(from,to,X,PT,H,PB)+'</g>'+grid
+        + '<line x1="'+PL+'" y1="'+PT+'" x2="'+PL+'" y2="'+(H-PB)+'" stroke="#30363d"/>'
+        + '<line x1="'+PL+'" y1="'+(H-PB)+'" x2="'+(W-PR)+'" y2="'+(H-PB)+'" stroke="#30363d"/>'
+        + '<path d="'+area+'" fill="'+sp.color+'" opacity="0.12"/>'
+        + '<polyline points="'+line+'" fill="none" stroke="'+sp.color
+        + '" stroke-width="1.8" stroke-linejoin="round"/>'+lines
+        + '<circle cx="'+X(fl[0]).toFixed(1)+'" cy="'+Y(fl[1]).toFixed(1)+'" r="3" fill="'+sp.color+'"/>'
+        + '<text x="6" y="'+(PT+4)+'" class="ax">'+(+hi.toFixed(1))+'</text>'
+        + '<text x="6" y="'+(PT+(H-PT-PB)/2+4)+'" class="ax">'+(+mid.toFixed(1))+'</text>'
+        + '<text x="6" y="'+(H-PB+4)+'" class="ax">'+(+lo.toFixed(1))+'</text>'
+        + '<text x="'+PL+'" y="'+(H-18)+'" class="ax">'+fmt(from)+'</text>'
+        + '<text x="'+(W-PR)+'" y="'+(H-18)+'" class="ax" text-anchor="end">'+fmt(to)+'</text>'
+        + '<text x="'+((PL+W-PR)/2)+'" y="'+(H-4)+'" text-anchor="middle" class="axt">時間 (月/日 時:分)</text>'
+        + '<text x="12" y="'+(PT+(H-PT-PB)/2)+'" class="axt" text-anchor="middle" '
+        + 'transform="rotate(-90 12 '+(PT+(H-PT-PB)/2)+')">'+sp.axis+'</text>'
+        + '</svg><div class="chd">'+sp.desc+' '+noteTxt+'</div></div>';
+    }).join("");
+  }
+
+  var END = t0 + (D.pts.length? D.pts[D.pts.length-1][0] : 0)*60000;
+  function preset(h, el){
+    document.querySelectorAll(".pbtn").forEach(function(b){b.classList.remove("on");});
+    if(el) el.classList.add("on");
+    var to=END, from=h? to-h*3600000 : t0;
+    document.getElementById("f").value=localInput(from);
+    document.getElementById("t").value=localInput(to);
+    draw(from,to);
+  }
+  window.__preset=preset;
+  window.__apply=function(){
+    var f=document.getElementById("f").value, t=document.getElementById("t").value;
+    if(!f||!t) return;
+    var from=new Date(f).getTime(), to=new Date(t).getTime();
+    if(from>=to){ alert("起始時間必須早於結束時間"); return; }
+    document.querySelectorAll(".pbtn").forEach(function(b){b.classList.remove("on");});
+    draw(from,to);
+  };
+  preset(24, document.querySelector(".pbtn[data-h='24']"));
+})();
+</script>
+</body></html>
